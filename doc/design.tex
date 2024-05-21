@@ -2,6 +2,7 @@
 \usepackage[letterpaper, total={6.5in, 9in}]{geometry}
 \usepackage{graphicx} % Required for inserting images
 \usepackage{hyperref}
+\usepackage[simplified]{pgf-umlcd}
 \usepackage{emoji}  % LuaLaTeX
 \setemojifont{TwemojiMozilla}
 
@@ -38,13 +39,49 @@ Optionally, PRC extensions may include (to be implemented after core functionali
 
 
 \section{UML Diagram}
-TODO
 \begin{itemize}
-    \item Display Box class
-    \item Text display class: User, Channel, Message
     \item Command Class (for parsing, help info, server/client designation)
     \item Connection Manager
 \end{itemize}
+
+\begin{tikzpicture}
+    \begin{class}{Display}{0,0}
+        \attribute{-width: int}
+        \attribute{-height: int}
+        \operation{+resize(int width, int height): void}
+        \operation{+display(): void}
+        \operation{+addLine(Text t): void}
+    \end{class}
+    \begin{interface}{Text}{8,0}
+        \operation{+print(int width): void}
+    \end{interface}
+    \begin{class}{User}{0,-5}
+        \implement{Text}
+        \attribute{-username: String}
+        \attribute{-hostname: String}
+        \attribute{-userColor: color}
+        \operation{+getUsername(): String}
+        \operation{+getHostname(): String}
+        \operation{+getColor(): color}
+        \operation{+setUsername(String newUsername): void}
+        \operation{-regenerateColor(): void}
+    \end{class}
+    \begin{class}{Channel}{6,-5}
+        \implement{Text}
+        \attribute{-name: String}
+        \attribute{-topic: String}
+        \operation{+getName(): String}
+        \operation{+getTopic(): String}
+        \operation{+setTopic(): String}
+    \end{class}
+    \begin{class}{Message}{10,-10}
+        \implement{Text}
+        \attribute{-content: String}
+    \end{class}
+    \unidirectionalAssociation{Display}{lines}{0..*}{Text}
+    \association{Channel}{channel}{1}{Message}{0..*}{messages}
+    \unidirectionalAssociation{Message}{author}{1}{User}
+\end{tikzpicture}
 
 \section{Manual}
 The main Processing program will serve as a launcher, allowing the user to select from server or client modes (or, perhaps, both simultaneously, analogously LAN multiplayer in video games).
