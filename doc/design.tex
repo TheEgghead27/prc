@@ -1,11 +1,12 @@
 \documentclass{article}
+\usepackage[letterpaper, total={6.5in, 9in}]{geometry}
 \usepackage{graphicx} % Required for inserting images
 \usepackage{hyperref}
 \usepackage{emoji}  % LuaLaTeX
 \setemojifont{TwemojiMozilla}
 
 \title{Processing Relay Chat -- PRC}
-\author{David Chen -- That One Stuy Linux Guy}
+\author{David Chen -- Team PLA (Pretty Lazy Acronym)}
 \date{Period 6}
 
 \begin{document}
@@ -38,6 +39,12 @@ Optionally, PRC extensions may include (to be implemented after core functionali
 
 \section{UML Diagram}
 TODO
+\begin{itemize}
+    \item Display Box class
+    \item Text display class: User, Channel, Message
+    \item Command Class (for parsing, help info, server/client designation)
+    \item Connection Manager
+\end{itemize}
 
 \section{Manual}
 The main Processing program will serve as a launcher, allowing the user to select from server or client modes (or, perhaps, both simultaneously, analogously LAN multiplayer in video games).
@@ -45,7 +52,7 @@ The main Processing program will serve as a launcher, allowing the user to selec
 \subsection{Server Mode}
 The user will be able to select a TCP port for the server to broadcast on.
 
-The program will then display a log of server interactions (user connections, messages, disconnections). The user can quit the program using `/quit`.
+The program will then display a log of server interactions (user connections, messages, disconnections). The user can quit the program using \verb|/quit|.
 
 \subsection{Client Mode}
 The user will then enter a server address/port to connect to. On successful connection, the user can register a username, which the server will check for uniqueness. If the username is rejected, the user is prompted to enter another username.
@@ -56,9 +63,16 @@ The client will then be offered a list of channel names (and their corresponding
 \subsubsection{Chat Window}
 The main chat window will display messages, usernames, and timestamps. Below the chat window, an input will be available for user messages/commands.
 
+\paragraph{Slash Commands}
+To join a room, use \verb|/join|. To leave a room, use \verb|/leave.| To quit the client, use \verb|/quit| (aliased to \verb|/q|).
+
+For information on further commands, use \verb|/help|.
+
 \section{Functionality}
+The goal for the coming week is to begin the initial framework for PRC; implementing all minimum features described in the specification.
 
 \subsection{Issues}
+None... yet.
 
 \section{Log}
 \emoji{wood}
