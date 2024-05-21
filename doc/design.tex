@@ -1,0 +1,66 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{hyperref}
+\usepackage{emoji}  % LuaLaTeX
+\setemojifont{TwemojiMozilla}
+
+\title{Processing Relay Chat -- PRC}
+\author{David Chen -- That One Stuy Linux Guy}
+\date{Period 6}
+
+\begin{document}
+
+\maketitle
+
+\section{Description}
+Processing Relay Chat (PRC) encompasses a client program, server program, and protocol for instant messaging over the network. To accomplish this in Processing PRC the \href{https://processing.org/reference/libraries/net/index.html}{Network} library.\\
+PRC will include the following minimum features:
+\begin{itemize}
+    \item Ephemeral plaintext (UTF-8) messaging
+    \item IRC-like channels with descriptions
+    \item Usernames with deterministic colors
+    \item Message timestamps
+    \item Light and Dark modes for interface display
+\end{itemize}
+
+Optionally, PRC extensions may include (to be implemented after core functionality is complete):
+\begin{itemize}
+    \item A slash command framework for advanced user interaction
+    \item Image embedding, including animated GIFs
+    \item Clickable links
+    \item File sharing functionality
+    \item Chat log export
+    \item Simple games embedded in the chat window (Tic-Tac-Toe, Checkers, etc.)
+    \item Additional themes for the interface (\href{https://draculatheme.com/}{Dracula}, \href{https://catppuccin.com/}{Catppuccin}, \href{https://www.nordtheme.com/}{Nord}, etc.)
+    \item IRC bridging/client-mode compatibility (highly ambitious)
+\end{itemize}
+
+
+\section{UML Diagram}
+TODO
+
+\section{Manual}
+The main Processing program will serve as a launcher, allowing the user to select from server or client modes (or, perhaps, both simultaneously, analogously LAN multiplayer in video games).
+
+\subsection{Server Mode}
+The user will be able to select a TCP port for the server to broadcast on.
+
+The program will then display a log of server interactions (user connections, messages, disconnections). The user can quit the program using `/quit`.
+
+\subsection{Client Mode}
+The user will then enter a server address/port to connect to. On successful connection, the user can register a username, which the server will check for uniqueness. If the username is rejected, the user is prompted to enter another username.
+
+The client will then be offered a list of channel names (and their corresponding topics). The client can choose to connect to a channel, upon which they will be put into a chat window view.
+
+
+\subsubsection{Chat Window}
+The main chat window will display messages, usernames, and timestamps. Below the chat window, an input will be available for user messages/commands.
+
+\section{Functionality}
+
+\subsection{Issues}
+
+\section{Log}
+\emoji{wood}
+
+\end{document}
