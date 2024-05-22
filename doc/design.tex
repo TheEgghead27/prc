@@ -3,8 +3,9 @@
 \usepackage{graphicx} % Required for inserting images
 \usepackage{hyperref}
 \usepackage[simplified]{pgf-umlcd}
-\usepackage{emoji}  % LuaLaTeX
-\setemojifont{TwemojiMozilla}
+\usepackage{pdflscape}
+% \usepackage{emoji}  % LuaLaTeX
+% \setemojifont{TwemojiMozilla}
 
 \title{Processing Relay Chat -- PRC}
 \author{David Chen -- Team PLA (Pretty Lazy Acronym)}
@@ -37,12 +38,8 @@ Optionally, PRC extensions may include (to be implemented after core functionali
     \item IRC bridging/client-mode compatibility (highly ambitious)
 \end{itemize}
 
-
+%\begin{landscape}
 \section{UML Diagram}
-\begin{itemize}
-    \item Command Class (for parsing, help info, server/client designation)
-    \item Connection Manager
-\end{itemize}
 
 \begin{tikzpicture}
     \begin{class}{Display}{0,0}
@@ -81,10 +78,37 @@ Optionally, PRC extensions may include (to be implemented after core functionali
     \unidirectionalAssociation{Display}{lines}{0..*}{Text}
     \association{Channel}{channel}{1}{Message}{0..*}{messages}
     \unidirectionalAssociation{Message}{author}{1}{User}
+\end{tikzpicture}\\
+(This diagram is getting way too complicated, splitting parts off for now...)
+
+\begin{tikzpicture}
+    \begin{class}{Client}{0, 0}
+        \attribute{-user: User}
+        \attribute{-channels: ArrayList<Channel>}
+        \attribute{-screens: ArrayList<Display>}
+        \operation{+connect(Server s): boolean}
+    \end{class}
+    \begin{class}{Server}{10,0}
+        \attribute{-port: int}
+        \attribute{-channels: ArrayList<Channel>}
+        \attribute{-screens: ArrayList<Display>}
+    \end{class}
+    \begin{abstractclass}{Command}{5,-5}
+        \attribute{-helpInfo: String}
+        \operation{+getHelp(): String}
+        \operation{+execute(String[] args): void}
+    \end{abstractclass}
+    \association{Server}{server}{1}{Client}{users}{0..*}
+    \unidirectionalAssociation{Client}{commands}{2..*}{Command}
+    \unidirectionalAssociation{Server}{commands}{2..*}{Command}
+    \umlnote[draw] at (5, -2) (commands-note) {Both client and server have, at minimum, \verb|/help| and \verb|/quit|.};
 \end{tikzpicture}
 
+%\end{landscape}
+\newpage
+
 \section{Manual}
-The main Processing program will serve as a launcher, allowing the user to select from server or client modes (or, perhaps, both simultaneously, analogously LAN multiplayer in video games).
+The main Processing program will serve as a launcher, allowing the user to select from server or client modes (or, perhaps, both simultaneously, analogous to LAN multiplayer in video games).
 
 \subsection{Server Mode}
 The user will be able to select a TCP port for the server to broadcast on.
@@ -112,6 +136,8 @@ The goal for the coming week is to begin the initial framework for PRC; implemen
 None... yet.
 
 \section{Log}
-\emoji{wood}
+\begin{itemize}
+    \item 05/20 -- 05/22: Began writing program specifications in \LaTeX.
+\end{itemize}
 
 \end{document}
