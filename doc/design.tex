@@ -84,14 +84,14 @@ Optionally, PRC extensions may include (to be implemented after core functionali
 \begin{tikzpicture}
     \begin{class}{Client}{0, 0}
         \attribute{-user: User}
-        \attribute{-channels: ArrayList<Channel>}
-        \attribute{-screens: ArrayList<Display>}
+        \attribute{-channels: ArrayList$<$Channel$>$}
+        \attribute{-screens: ArrayList$<$Display$>$}
         \operation{+connect(Server s): boolean}
     \end{class}
     \begin{class}{Server}{10,0}
         \attribute{-port: int}
-        \attribute{-channels: ArrayList<Channel>}
-        \attribute{-screens: ArrayList<Display>}
+        \attribute{-channels: ArrayList$<$Channel$>$}
+        \attribute{-screens: ArrayList$<$Display$>$}
     \end{class}
     \begin{abstractclass}{Command}{5,-5}
         \attribute{-helpInfo: String}
