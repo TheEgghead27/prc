@@ -53,7 +53,7 @@ Optionally, PRC extensions may include (to be implemented after core functionali
         \operation{+print(int width): void}
     \end{interface}
 
-    \begin{class}[text width = 4cm]{Display}{12,-4}
+    \begin{class}[text width = 4cm]{Display}{12,-6}
         \attribute{-width: int}
         \attribute{-height: int}
         \operation{+resize(int width, int height): void}
@@ -62,7 +62,7 @@ Optionally, PRC extensions may include (to be implemented after core functionali
     \end{class}
     \unidirectionalAssociation{Display}{lines}{0..*}{Text}
 
-    \begin{class}[text width = 4cm]{User}{12, 6}
+    \begin{class}[text width = 4cm]{User}{12, 8}
         \implement{Text}
         \attribute{-username: String}
         \attribute{-hostname: String}
@@ -84,7 +84,7 @@ Optionally, PRC extensions may include (to be implemented after core functionali
     \end{class}
     \unidirectionalAssociation{Channel}{users}{0..*}{User}
 
-    \begin{class}[text width = 4cm]{Message}{20,-4}
+    \begin{class}[text width = 4cm]{Message}{20,-6}
         \implement{Text}
         \attribute{-content: String}
     \end{class}
@@ -104,7 +104,7 @@ Optionally, PRC extensions may include (to be implemented after core functionali
     \unidirectionalAssociation{Server}{channels}{0..*}{Channel}
     \unidirectionalAssociation{Server}{commands}{2..*}{Command}
 
-    \begin{class}{Client}{4, -3}
+    \begin{class}{Client}{4, -4}
         \operation{+connect(Server s): boolean}
     \end{class}
     \unidirectionalAssociation{Client}{user}{1}{User}
@@ -114,7 +114,7 @@ Optionally, PRC extensions may include (to be implemented after core functionali
 
     \association{Server}{server}{1}{Client}{clients}{0..*}
 
-    \umlnote[draw] at (-4, -3) (commands-note) {Both client and server have, at minimum, \verb|/help| and \verb|/quit|.};
+    \umlnote[draw] at (-4, -4) (commands-note) {Both client and server have, at minimum, \verb|/help| and \verb|/quit|.};
 \end{scope}
 \end{tikzpicture}
 \\\\
