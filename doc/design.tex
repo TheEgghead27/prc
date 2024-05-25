@@ -49,11 +49,21 @@ Optionally, PRC extensions may include (to be implemented after core functionali
 
 \begin{tikzpicture}
 \begin{scope}[scale=0.8, transform shape]
-    \begin{interface}[text width = 4cm]{Text}{20,0}
-        \operation{+print(int width): void}
-    \end{interface}
+    \begin{abstractclass}[text width = 4cm]{Text}{20,4}
+	\attribute{+regular: PFont}
+	\attribute{+bold: PFont}
+	\attribute{+italic: PFont}
+	\attribute{+fontSize: int}
+	\attribute{+fontWidth: float}
+	\attribute{+lineSpace: float}
+        \operation{+display(int x, int y, int w): int[3]}
+        \operation{+display(int x, int y, int w, String s): int[3]}
+        \operation{+display(int x, int y, int w, String s, color c): int[3]}
+        \operation{+display(int x, int y, int w, String s, color c, PFont font): int[3]}
+    \end{abstractclass}
+	\umlnote[draw] at (20, 8) (text) {Due to Processing limitations, instance variables (which are static, and initialized in \verb|setup()|) are in a static superclass \verb|TextConstants|.};
 
-    \begin{class}[text width = 4cm]{Display}{12,-6}
+    \begin{class}[text width = 4cm]{Display}{12,-8}
         \attribute{-width: int}
         \attribute{-height: int}
         \operation{+resize(int width, int height): void}
@@ -69,22 +79,22 @@ Optionally, PRC extensions may include (to be implemented after core functionali
         \attribute{-userColor: color}
         \operation{+getUsername(): String}
         \operation{+getHostname(): String}
-        \operation{+getColor(): color}
-        \operation{+setUsername(String newUsername): void}
-        \operation{-regenerateColor(): void}
+        \operation{+setUsername(String newUsername): boolean}
+        \operation{-regenerate(): void}
     \end{class}
 
     \begin{class}[text width = 4cm]{Channel}{12,0}
         \implement{Text}
         \attribute{-name: String}
         \attribute{-topic: String}
+	\operation{+displayVerbose(int x, int y, int w): int[3]}
         \operation{+getName(): String}
         \operation{+getTopic(): String}
-        \operation{+setTopic(): String}
+        \operation{+setTopic(String newTopic): boolean}
     \end{class}
     \unidirectionalAssociation{Channel}{users}{0..*}{User}
 
-    \begin{class}[text width = 4cm]{Message}{20,-6}
+    \begin{class}[text width = 4cm]{Message}{20,-8}
         \implement{Text}
         \attribute{-content: String}
     \end{class}
@@ -117,8 +127,6 @@ Optionally, PRC extensions may include (to be implemented after core functionali
     \umlnote[draw] at (-4, -4) (commands-note) {Both client and server have, at minimum, \verb|/help| and \verb|/quit|.};
 \end{scope}
 \end{tikzpicture}
-\\\\
-(Yes, this diagram is very complicated, so much so that I had to scale this to 80\% size just to get it to fit...)
 \end{landscape}
 
 \section{Manual}
@@ -156,6 +164,7 @@ The goal for the coming week is to begin the initial framework for PRC; implemen
     \item 05/20: Began writing program specifications in \LaTeX.
     \item 05/21 -- 05/22: Constructed UML class diagrams for anticipated object classes.
     \item 05/23 -- 05/24: Corrected text location alignment issues.
+    \item 05/25: Implemented Text subclasses and display() functions; turned Text into an abstract base class to deduplicate logic.
 \end{itemize}
 
 \end{document}
