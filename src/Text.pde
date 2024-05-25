@@ -3,7 +3,8 @@ static abstract class TextConstants {
   static PFont regular, bold, italic;
   static color textColor;
   static int fontSize;
-  static float lineWidth;
+  static float fontWidth;
+  static float lineSpace;
 }
 abstract class Text extends TextConstants {
   // width in characters, assuming monospace font
@@ -18,17 +19,19 @@ abstract class Text extends TextConstants {
     return display(x, y, w, s);
   }
   int[] display(int x, int y, int w, String s) {
-    float rows = 0;
-    int cols = 0;
+    int rows = 0;  // number of character rows
+    int remain = 0;  // number of characters printed in last row
+
     for (int i = 0; i < s.length(); i += w) {
       String line = s.substring(i, Math.min(i+w, s.length()));
-      text(line, x, y);
-      rows += fontSize * lineWidth;
-      cols = Math.max(cols, Math.round(textWidth(line))); 
+      text(line, x, y + rows * fontSize);
+      rows++;
+      remain = line.length();
     }
     return new int[]{
-      Math.round(rows),
-      cols
+      rows,
+      remain,
+      s.length()
     };
   }
 }
@@ -95,12 +98,21 @@ class Message extends Text {
   }
 
   int[] display(int x, int y, int w) {
+    String disp = content;
     int[] ret, tmp;
     ret = author.display(x, y, w);
-    x+=ret[0];
-    tmp = display(x, y, w, content, textColor, regular);
+    y += ret[0] * fontSize;
+    if (ret[1] > 1) {  // username (+ 1 space) did not take up full row
+      // move back a row
+      y -= fontSize;
+      ret[0]--;
+
+      disp = new String(new char[ret[1] + 1]).replace('\0', ' ') + disp; // skip the chars in the last row + 1 space
+    }
+
+    tmp = display(x, y, w, disp, textColor, regular);
     ret[0] += tmp[0];
-    ret[1] = Math.max(ret[1], tmp[1]);
+    ret[1] = tmp[1];
     return ret;
   }
 }

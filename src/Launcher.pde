@@ -3,25 +3,33 @@ void setup() {
   background(0);
 
   // initialize Text fonts and rendering settings
-  Text.regular = createFont("Liberation Mono", 12);
-  Text.bold = createFont("Liberation Mono Bold", 12);
-  Text.italic = createFont("Liberation Mono Italic", 12);
+  Text.lineSpace = .5;
+  Text.fontSize = 12;
+  Text.regular = createFont("Liberation Mono", Text.fontSize);
+  Text.bold = createFont("Liberation Mono Bold", Text.fontSize);
+  Text.italic = createFont("Liberation Mono Italic", Text.fontSize);
   textAlign(LEFT, TOP);
   Text.textColor = #ffffff;
+  textFont(Text.regular);
+  Text.fontWidth = textWidth(" ");  // monospace font means we can assume this is uniform
 
   User egg = new User("egg");
-  Text[] users = new Text[]{
+  User novillo = new User("jnovillo", "lisa.stuy.edu");
+  User lenny = new User("lenny", "stuylinux.org");
+  Text[] texts = new Text[]{
     egg,
-    new User("jnovillo", "lisa.stuy.edu"),
-    new User("lenny", "stuylinux.org"),
+    novillo,
+    lenny,
     new User("lenny", "chat.stuywlc.org"),
-    null
+    new Message(egg, "hello world"),
+    new Message(novillo, "hello friends :)"),
+    new Message(lenny, "yap yap yap yap yap yap yap yap yap yap yap yap :P")
   };
-  users[4] = new Message(egg, "hello world");
 
-  int y = -12;
-  for (Text user: users)
-    user.display(5,y+=18, 1000);
+  int y = 6;
+  for (Text text: texts) {
+    y += ((text.display(5, y, 20))[0] + Text.lineSpace) * Text.fontSize;
+  }
 }
 
 void draw() {
