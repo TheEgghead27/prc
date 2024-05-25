@@ -23,7 +23,7 @@ void setup() {
     new User("lenny", "chat.stuywlc.org"),
     new Message(egg, "hello world"),
     new Message(novillo, "hello friends :)"),
-    new Message(lenny, "yap yap yap yap yap yap yap yap yap yap yap yap :P")
+    new Message(lenny, "yap yap yap yap yap yap yap yap yap yap yap yap :P"),
   };
 
   int y = 6;
@@ -39,6 +39,16 @@ void setup() {
   for (Channel channel: channels) {
     y += ((channel.display(300, y, 30))[0] + Text.lineSpace) * Text.fontSize;
     y += ((channel.displayVerbose(300, y, 30))[0] + Text.lineSpace) * Text.fontSize;
+  }
+
+  Display[] displays = new Display[]{
+    new Display(200,150, 80, 50)
+  };
+  for (Text text: texts) {
+    displays[0].addLine(text);
+  }
+  for (Display display: displays) {
+    display.display();
   }
 }
 

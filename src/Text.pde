@@ -135,16 +135,9 @@ class Channel extends Text {
   String getTopic() {
     return topic;
   }
-  boolean setName(String n) {
-    if (n.length() > 0) {
-      name = n;
-      return true;
-    }
-    return false;
-  }
-  boolean setTopic(String t) {
-    if (t.length() > 0) {
-      topic = t;
+  boolean setTopic(String newTopic) {
+    if (newTopic.length() > 0) {
+      topic = newTopic;
       return true;
     }
     return false;
