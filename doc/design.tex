@@ -66,8 +66,9 @@ Optionally, PRC extensions may include (to be implemented after core functionali
     \begin{class}[text width = 4cm]{Display}{12,-8}
         \attribute{-width: int}
         \attribute{-height: int}
-        \operation{+resize(int width, int height): void}
-        \operation{+display(): void}
+        \operation{+reposition(int x, int y): void}
+        \operation{+resize(int w, int h): void}
+        \operation{+display(): float[2]}
         \operation{+addLine(Text t): void}
     \end{class}
     \unidirectionalAssociation{Display}{lines}{0..*}{Text}
@@ -164,7 +165,7 @@ The goal for the coming week is to begin the initial framework for PRC; implemen
     \item 05/20: Began writing program specifications in \LaTeX.
     \item 05/21 -- 05/22: Constructed UML class diagrams for anticipated object classes.
     \item 05/23 -- 05/24: Corrected text location alignment issues.
-    \item 05/25: Implemented Text subclasses and display() functions; turned Text into an abstract base class to deduplicate logic.
+    \item 05/25: Implemented Text subclasses and display() functions; turned Text into an abstract base class to deduplicate logic; Implemented Display and constructed a testing mockup.
 \end{itemize}
 
 \end{document}
