@@ -1,18 +1,20 @@
 static abstract class TextConstants {
+  // PRECONDITION: All PFonts are initialized externally in setup()
   static PFont regular, bold, italic;
 }
 abstract class Text extends TextConstants {
   // width in characters, assuming monospace font
-  abstract void print(int x, int y, int w);
+  abstract void display(int x, int y, int w);
 
-  void print(int x, int y, int w, String s, color c, PFont font) {
+  void display(int x, int y, int w, String s, color c, PFont font) {
     textFont(font);
-    print(x,y,w,s,c);
+    display(x,y,w,s,c);
   }
-  void print(int x, int y, int w, String s, color c) {
+  void display(int x, int y, int w, String s, color c) {
     fill(c);
+    display(x, y, w, s);
   }
-  void print(int x, int y, int w, String s) {
+  void display(int x, int y, int w, String s) {
     for (int i = 0; i < s.length(); i += w) {
       text(s.substring(i, Math.min(i+w, s.length())),x,y);
     }
@@ -44,8 +46,8 @@ class User extends Text {
     regenerate();
   }
 
-  void print(int x, int y, int w) {
-    super.print(x,y,w,fullname,userColor,bold);
+  void display(int x, int y, int w) {
+    display(x,y,w,fullname,userColor,bold);
   }
   public String getUsername() {
     return username;
