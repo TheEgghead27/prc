@@ -147,12 +147,15 @@ For information on further commands, use \verb|/help|.
 The goal for the coming week is to begin the initial framework for PRC; implementing all minimum features described in the specification.
 
 \subsection{Issues}
-None... yet.
+\begin{enumerate}
+    \item To share font data among \verb|Text| subclasses, it was appropriate to use \verb|static| variables, but there may be "non-\verb|static| inner type" issues when trying to declare \verb|static| variables in the \verb|Text| abstract class. To fix this, the abstract class itself must be declared \verb|static|. (\href{https://forum.processing.org/two/discussion/23623/when-creating-a-class-what-is-it-an-inner-class-of-declared-static-in-a-non-static-inner-type.html}{Source})
+\end{enumerate}
 
 \section{Log}
 \begin{itemize}
     \item 05/20: Began writing program specifications in \LaTeX.
     \item 05/21 -- 05/22: Constructed UML class diagrams for anticipated object classes.
+    \item 05/23 -- 05/24: Corrected text location alignment issues.
 \end{itemize}
 
 \end{document}

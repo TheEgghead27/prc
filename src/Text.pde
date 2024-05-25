@@ -1,6 +1,22 @@
-interface Text {
+static abstract class TextConstants {
+  static PFont regular, bold, italic;
+}
+abstract class Text extends TextConstants {
   // width in characters, assuming monospace font
-  void print(int x, int y, int w);
+  abstract void print(int x, int y, int w);
+
+  void print(int x, int y, int w, String s, color c, PFont font) {
+    textFont(font);
+    print(x,y,w,s,c);
+  }
+  void print(int x, int y, int w, String s, color c) {
+    fill(c);
+  }
+  void print(int x, int y, int w, String s) {
+    for (int i = 0; i < s.length(); i += w) {
+      text(s.substring(i, Math.min(i+w, s.length())),x,y);
+    }
+  }
 }
 
 color colors[] = new color[]{
@@ -12,7 +28,7 @@ color colors[] = new color[]{
     #FF00FF
 };
 
-class User implements Text {
+class User extends Text {
   private String username;
   private String hostname = "localhost";
   private String fullname;
@@ -29,11 +45,7 @@ class User implements Text {
   }
 
   void print(int x, int y, int w) {
-    fill(userColor);
-
-    for (int i = 0; i < fullname.length(); i += w) {
-      text(fullname.substring(i, Math.min(i+w, fullname.length())),x,y);
-    } 
+    super.print(x,y,w,fullname,userColor,bold);
   }
   public String getUsername() {
     return username;
