@@ -30,6 +30,16 @@ void setup() {
   for (Text text: texts) {
     y += ((text.display(5, y, 20))[0] + Text.lineSpace) * Text.fontSize;
   }
+  Channel[] channels = new Channel[] {
+    new Channel("apcsa", "chatroom for APCSA students"),
+    new Channel("dojo", "chatroom for all StuyCS students")
+  };
+
+  y = 6;
+  for (Channel channel: channels) {
+    y += ((channel.display(300, y, 30))[0] + Text.lineSpace) * Text.fontSize;
+    y += ((channel.displayVerbose(300, y, 30))[0] + Text.lineSpace) * Text.fontSize;
+  }
 }
 
 void draw() {
