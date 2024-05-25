@@ -1,5 +1,5 @@
 void setup() {
-  size(800,800);
+  size(1200,800);
   background(0);
 
   // initialize Text fonts and rendering settings
@@ -16,39 +16,42 @@ void setup() {
   User egg = new User("egg");
   User novillo = new User("jnovillo", "lisa.stuy.edu");
   User lenny = new User("lenny", "stuylinux.org");
-  Text[] texts = new Text[]{
+  User[] users = new User[]{
     egg,
     novillo,
     lenny,
     new User("lenny", "chat.stuywlc.org"),
+  };
+  Message[] messages = new Message[]{
     new Message(egg, "hello world"),
     new Message(novillo, "hello friends :)"),
-    new Message(lenny, "yap yap yap yap yap yap yap yap yap yap yap yap :P"),
+    new Message(lenny, "yap yap yap yap yap yap yap yap yap yap yap yap linux :P"),
+    new Message(egg, "I'd just like to interject for a moment. What you're refering to as Linux, is in fact, GNU/Linux, or as I've recently taken to calling it, GNU plus Linux. Linux is not an operating system unto itself, but rather another free component of a fully functioning GNU system made useful by the GNU corelibs, shell utilities and vital system components comprising a full OS as defined by POSIX. Many computer users run a modified version of the GNU system every day, without realizing it. Through a peculiar turn of events, the version of GNU which is widely used today is often called Linux, and many of its users are not aware that it is basically the GNU system, developed by the GNU Project. There really is a Linux, and these people are using it, but it is just a part of the system they use. Linux is the kernel: the program in the system that allocates the machine's resources to the other programs that you run. The kernel is an essential part of an operating system, but useless by itself; it can only function in the context of a complete operating system. Linux is normally used in combination with the GNU operating system: the whole system is basically GNU with Linux added, or GNU/Linux. All the so-called Linux distributions are really distributions of GNU/Linux!"),
   };
-
-  int y = 6;
-  for (Text text: texts) {
-    y += ((text.display(5, y, 20))[0] + Text.lineSpace) * Text.fontSize;
-  }
   Channel[] channels = new Channel[] {
     new Channel("apcsa", "chatroom for APCSA students"),
     new Channel("dojo", "chatroom for all StuyCS students")
   };
-
-  y = 6;
-  for (Channel channel: channels) {
-    y += ((channel.display(300, y, 30))[0] + Text.lineSpace) * Text.fontSize;
-    y += ((channel.displayVerbose(300, y, 30))[0] + Text.lineSpace) * Text.fontSize;
-  }
-
   Display[] displays = new Display[]{
-    new Display(200,150, 80, 50)
+    new Display(0, 0, 20, 60),
+    new Display(200,0, 80, 60),
+    new Display(500,0, 30, 60),
   };
-  for (Text text: texts) {
-    displays[0].addLine(text);
+  for (Text channel: channels) {
+    displays[0].addLine(channel);
   }
+  for (Text message: messages) {
+    displays[1].addLine(message);
+  }
+  for(Text user: users) {
+    displays[2].addLine(user);
+  }
+  float[] buf = null;
   for (Display display: displays) {
-    display.display();
+    if (buf != null) {
+      display.reposition((int)buf[0], 0);
+    }
+    buf = display.display();
   }
 }
 
