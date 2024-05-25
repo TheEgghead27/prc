@@ -7,13 +7,18 @@ void setup() {
   Text.bold = createFont("Liberation Mono Bold", 12);
   Text.italic = createFont("Liberation Mono Italic", 12);
   textAlign(LEFT, TOP);
+  Text.textColor = #ffffff;
 
+  User egg = new User("egg");
   Text[] users = new Text[]{
-    new User("egg"),
+    egg,
     new User("jnovillo", "lisa.stuy.edu"),
     new User("lenny", "stuylinux.org"),
-    new User("lenny", "chat.stuywlc.org")
+    new User("lenny", "chat.stuywlc.org"),
+    null
   };
+  users[4] = new Message(egg, "hello world");
+
   int y = -12;
   for (Text user: users)
     user.display(5,y+=18, 1000);

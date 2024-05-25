@@ -1,33 +1,45 @@
 static abstract class TextConstants {
   // PRECONDITION: All PFonts are initialized externally in setup()
   static PFont regular, bold, italic;
+  static color textColor;
+  static int fontSize;
+  static float lineWidth;
 }
 abstract class Text extends TextConstants {
   // width in characters, assuming monospace font
-  abstract void display(int x, int y, int w);
+  abstract int[] display(int x, int y, int w);
 
-  void display(int x, int y, int w, String s, color c, PFont font) {
+  int[] display(int x, int y, int w, String s, color c, PFont font) {
     textFont(font);
-    display(x,y,w,s,c);
+    return display(x, y, w, s, c);
   }
-  void display(int x, int y, int w, String s, color c) {
+  int[] display(int x, int y, int w, String s, color c) {
     fill(c);
-    display(x, y, w, s);
+    return display(x, y, w, s);
   }
-  void display(int x, int y, int w, String s) {
+  int[] display(int x, int y, int w, String s) {
+    float rows = 0;
+    int cols = 0;
     for (int i = 0; i < s.length(); i += w) {
-      text(s.substring(i, Math.min(i+w, s.length())),x,y);
+      String line = s.substring(i, Math.min(i+w, s.length()));
+      text(line, x, y);
+      rows += fontSize * lineWidth;
+      cols = Math.max(cols, Math.round(textWidth(line))); 
     }
+    return new int[]{
+      Math.round(rows),
+      cols
+    };
   }
 }
 
 color colors[] = new color[]{
-    #FF8800,
-    #FF2222,
-    #00FF00,
-    #00FF88,
-    #0088FF,
-    #FF00FF
+  #FF8800,
+  #FF2222,
+  #00FF00,
+  #00FF88,
+  #0088FF,
+  #FF00FF
 };
 
 class User extends Text {
@@ -46,8 +58,8 @@ class User extends Text {
     regenerate();
   }
 
-  void display(int x, int y, int w) {
-    display(x,y,w,fullname,userColor,bold);
+  int[] display(int x, int y, int w) {
+    return display(x, y, w, fullname, userColor, bold);
   }
   public String getUsername() {
     return username;
@@ -70,5 +82,25 @@ class User extends Text {
       a += fullname.charAt(i) * i;
     }
     userColor = colors[a % colors.length];
+  }
+}
+
+class Message extends Text {
+  private User author;
+  private String content;
+
+  public Message(User a, String c) {
+    author = a;
+    content = c;
+  }
+
+  int[] display(int x, int y, int w) {
+    int[] ret, tmp;
+    ret = author.display(x, y, w);
+    x+=ret[0];
+    tmp = display(x, y, w, content, textColor, regular);
+    ret[0] += tmp[0];
+    ret[1] = Math.max(ret[1], tmp[1]);
+    return ret;
   }
 }
