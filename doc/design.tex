@@ -25,7 +25,7 @@
 Processing Relay Chat (PRC) encompasses a client program, server program, and protocol for instant messaging over the network. To accomplish this in Processing PRC the \href{https://processing.org/reference/libraries/net/index.html}{Network} library.\\
 PRC will include the following minimum features:
 \begin{itemize}
-    \item Ephemeral plaintext (UTF-8) messaging
+    \item Ephemeral plaintext (printable ASCII)\footnote{Due to font limitations, Unicode glyphs for other languages/emojis may not be fully supported.} messaging
     \item IRC-like channels with descriptions
     \item Usernames with deterministic colors
     \item Message timestamps
@@ -44,7 +44,7 @@ Optionally, PRC extensions may include (to be implemented after core functionali
     \item IRC bridging/client-mode compatibility (highly ambitious)
 \end{itemize}
 
-\begin{landscape}
+%\begin{landscape}
 \section{UML Diagram}
 \begin{tikzpicture}
 \begin{scope}[scale=0.8, transform shape]
@@ -69,11 +69,18 @@ Optionally, PRC extensions may include (to be implemented after core functionali
         \operation{+resize(int w, int h): void}
         \operation{+display(): float[2]}
         \operation{+addLine(Text t): void}
+        \operation{+removeLine(Text t): boolean}
     \end{class}
     \unidirectionalAssociation{Display}{lines}{0..*}{Text}
 
+    \begin{class}[text width = 4cm]{Input}{20, -9}
+	\inherit{Display}
+	\attribute{+content: String}
+    \end{class}
+    \umlnote[draw] at (20, -11) (input-note) {\verb|content| is public to allow for the key event handler to manipulate its content.};
+
     \begin{class}[text width = 4cm]{User}{12, 8}
-        \implement{Text}
+        \inherit{Text}
         \attribute{-username: String}
         \attribute{-hostname: String}
         \attribute{-userColor: color}
@@ -83,51 +90,57 @@ Optionally, PRC extensions may include (to be implemented after core functionali
         \operation{-regenerate(): void}
     \end{class}
 
-    \begin{class}[text width = 4cm]{Channel}{12,0}
-        \implement{Text}
+    \begin{class}[text width = 4cm]{Channel}{12,2}
+        \inherit{Text}
         \attribute{-name: String}
         \attribute{-topic: String}
 	\operation{+displayVerbose(int x, int y, int w): int[3]}
         \operation{+getName(): String}
         \operation{+getTopic(): String}
         \operation{+setTopic(String newTopic): boolean}
+	\operation{+addUser(User u): void}
+	\operation{+removeUser(String username): boolean}
+	\operation{+addMessage(Message m): void}
     \end{class}
     \unidirectionalAssociation{Channel}{users}{0..*}{User}
 
     \begin{class}[text width = 4cm]{Message}{20,-7}
-        \implement{Text}
+        \inherit{Text}
         \attribute{-content: String}
     \end{class}
     \association{Channel}{channel}{1}{Message}{0..*}{messages}
     \unidirectionalAssociation{Message}{author}{1}{User}
 
-    \begin{abstractclass}{Command}{-4,0}
+    \begin{abstractclass}{Command}{4,-7}
         \attribute{-helpInfo: String}
         \operation{+getHelp(): String}
         \operation{+execute(String[] args): void}
     \end{abstractclass}
 
-    \begin{class}[text width = 4cm]{Server}{4,2}
+    \begin{class}[text width = 5cm]{Instance}{4,3}
+        \attribute{-host: String}
         \attribute{-port: int}
+	\attribute{-client: Client}
+	\attribute{-server: Server}
+	\operation{+handleConnect(Client session): void}  % serverEvent()
+	\operation{+handleServerPacket(byte[] packet): void}  % clientEvent() - client receives packet
+	\operation{+handleClientPacket(Client session, byte[] packet): void}  % Server.available() - server receives packet
+	\operation{+addScreen(Display screen): void}
+	\operation{+addChannel(Channel channel): void}
+	\operation{+removeChannel(Channel channel): boolean}
+	\operation{+removeChannel(String channelName): boolean}
     \end{class}
-    \unidirectionalAssociation{Server}{screens}{0..1}{Display}
-    \unidirectionalAssociation{Server}{channels}{0..*}{Channel}
-    \unidirectionalAssociation{Server}{commands}{2..*}{Command}
+    \unidirectionalAssociation{Instance}{screens}{0..*}{Display}
+    \unidirectionalAssociation{Instance}{channels}{0..*}{Channel}
+    \unidirectionalAssociation{Instance}{commands}{2..*}{Command}
+    \unidirectionalAssociation{Instance}{session}{0..1}{User}
 
-    \begin{class}{Client}{4, -4}
-        \operation{+connect(Server s): boolean}
-    \end{class}
-    \unidirectionalAssociation{Client}{user}{1}{User}
-    \unidirectionalAssociation{Client}{commands}{2..*}{Command}
-    \unidirectionalAssociation{Client}{screens}{0..*}{Display}
-    \unidirectionalAssociation{Client}{channels}{0..*}{Channel}
-
-    \association{Server}{server}{1}{Client}{clients}{0..*}
-
-    \umlnote[draw] at (-4, -4) (commands-note) {Both client and server have, at minimum, \verb|/help| and \verb|/quit|.};
+    \umlnote[draw] at (4, -10) (commands-note) {Any instance will have have, at minimum, \verb|/help| and \verb|/quit|.};
+    \umlnote[draw,text width=6cm] at (4, 8) (user-note) {Whether an instance is running in server mode, client mode, or both depends on whether the relevant variables are \verb|null| or not. Behaviors are loaded into commands/screens at \verb|setup()|, and event handler methods are called by the main class due to Processing program structure.};
 \end{scope}
 \end{tikzpicture}
-\end{landscape}
+%\end{landscape}
+\newpage
 
 \section{Manual}
 The main Processing program will serve as a launcher, allowing the user to select from server or client modes (or, perhaps, both simultaneously, analogous to LAN multiplayer in video games).
