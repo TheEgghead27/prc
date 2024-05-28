@@ -46,7 +46,6 @@ Optionally, PRC extensions may include (to be implemented after core functionali
 
 \begin{landscape}
 \section{UML Diagram}
-
 \begin{tikzpicture}
 \begin{scope}[scale=0.8, transform shape]
     \begin{abstractclass}[text width = 4cm]{Text}{20,4}
@@ -63,7 +62,7 @@ Optionally, PRC extensions may include (to be implemented after core functionali
     \end{abstractclass}
 	\umlnote[draw] at (20, 8) (text) {Due to Processing limitations, instance variables (which are static, and initialized in \verb|setup()|) are in a static superclass \verb|TextConstants|.};
 
-    \begin{class}[text width = 4cm]{Display}{12,-8}
+    \begin{class}[text width = 4cm]{Display}{12,-7}
         \attribute{-width: int}
         \attribute{-height: int}
         \operation{+reposition(int x, int y): void}
@@ -95,7 +94,7 @@ Optionally, PRC extensions may include (to be implemented after core functionali
     \end{class}
     \unidirectionalAssociation{Channel}{users}{0..*}{User}
 
-    \begin{class}[text width = 4cm]{Message}{20,-8}
+    \begin{class}[text width = 4cm]{Message}{20,-7}
         \implement{Text}
         \attribute{-content: String}
     \end{class}
