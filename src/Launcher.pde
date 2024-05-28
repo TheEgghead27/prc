@@ -1,3 +1,5 @@
+Instance instance;
+
 void setup() {
   size(1200,800);
   background(0);
@@ -57,4 +59,13 @@ void setup() {
 
 void draw() {
 
+}
+
+void clientEvent(Client client) {
+  if (!instance.isClient()) return;
+  instance.handleServerPacket(client.readBytes());
+}
+void serverEvent(Server server, Client client) {
+  if (!instance.isServer()) return;
+  instance.handleClientPacket(client, client.readBytes());
 }
