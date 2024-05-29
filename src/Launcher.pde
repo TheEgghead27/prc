@@ -1,4 +1,6 @@
 Instance instance;
+final boolean hasServer = true;
+final String userNameTmp = "egg";
 
 void setup() {
   size(1200,800);
@@ -52,13 +54,15 @@ void setup() {
   for(Text user: users) {
     displays[2].addLine(user);
   }
-  instance = new Instance(new Server(this, 2510), new Client(this, "127.0.0.1", 2510));
+  if (hasServer)
+    instance = new Instance(new Server(this, 2510), new Client(this, "127.0.0.1", 2510));
+  else
+    instance = new Instance(new Client(this, "127.0.0.1", 2510));
   instance.input = new Input();
   displays[3].addLine(instance.input);
   float[] buf = null;
   for (Display display: displays) {
     if (buf != null) {
-      println("Repositioning to " + buf[0]);
       if (display != displays[3])
         display.reposition((int)buf[0], 0);
 
@@ -66,7 +70,6 @@ void setup() {
     buf = display.display();
     instance.screens.add(display);
     if (display == messageBox) {
-      println("moving");
       displays[3].reposition(messageBox.getX(), (int) buf[1]);
     }
   }
@@ -90,11 +93,10 @@ void clientEvent(Client client) {
 }
 
 void keyPressed() {
-  println(keyCode);
   if (keyCode == '\177' || keyCode == '\b')
     instance.input.content = instance.input.content.substring(0, Math.max(instance.input.content.length() - 1, 0));
   if (keyCode == '\n' || keyCode == '\r') {
-    Message m = new Message(new User("egg", "127.0.0.1"), instance.input.content);
+    Message m = new Message(new User(userNameTmp, "127.0.0.1"), instance.input.content);
     instance.screens.get(1).addLine(m);
     instance.sendMessage(m);
     instance.input.content = "";
@@ -102,7 +104,6 @@ void keyPressed() {
   if (keyCode < ' ' || keyCode >= '\177')  // non-printable ASCII
     return;
   instance.input.content += key;
-  println("added " + (char)keyCode);
 }
 /*
 void serverEvent(Server server, Client client) {

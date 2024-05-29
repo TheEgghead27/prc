@@ -40,15 +40,27 @@ public class Instance {
 
   public void sendMessage(Message m) {
     HashMap<String, String> message = new HashMap<String, String>();
+    String uuid = "" + Math.random();
     message.put("Command", "SEND");
     message.put("User", m.getAuthor().getUsername());
     message.put("Host", m.getAuthor().getHostname());
     message.put("Content", m.getContent());
+    message.put("UUID", uuid);
     client.write(encodePacket(message));
+    sent.add(uuid);
   }
   public void handleServerPacket(byte[] packet) {
     HashMap<String, String> parsed = parsePacket(packet);
-    println("Got packet!" + parsed.values());
+
+    // skip packets we sent
+    String uuid = parsed.getOrDefault("UUID", "");
+    for (int i = 0; i < sent.size(); i++) {
+      if (sent.get(i).equals(uuid)) {
+        sent.remove(i);
+        return;
+      }
+    }
+
     String command = parsed.getOrDefault("Command", "");
     if (command.equals("SEND")) {
       // Channel channel = channels.get(getChannel(parsed.get("Channel")));
@@ -80,7 +92,7 @@ public class Instance {
      int index = 0;
      boolean isValue = false;
 
-     while (index < packet.length && packet[index] != '\003' && packet[index] >= 0) {
+     while (index < packet.length && index >= 0) {
        String newChar = "";
        switch(packet[index]) {
          case '\n':
@@ -92,7 +104,7 @@ public class Instance {
            newChar = "    ";
            break;
          case '\003':
-           index = -1;
+           index = -2;
            /* fallthrough */
          case '\036':
            if (!isValue)
