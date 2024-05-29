@@ -138,14 +138,14 @@ Optionally, PRC extensions may include (to be implemented after core functionali
     \unidirectionalAssociation{Instance}{session}{0..1}{User}
 
     \umlnote[draw] at (4, -10) (commands-note) {Any instance will have have, at minimum, \verb|/help| and \verb|/quit|.};
-    \umlnote[draw,text width=6cm] at (4, 8) (user-note) {Whether an instance is running in server mode, client mode, or both depends on whether the relevant variables are \verb|null| or not. Behaviors are loaded into commands/screens at \verb|setup()|, and event handler methods are called by the main class due to Processing program structure.};
+    \umlnote[draw,text width=6cm] at (4, 8) (user-note) {Whether an instance is running in server mode or client mode depends on whether the relevant variables are \verb|null| or not. Behaviors are loaded into commands/screens at \verb|setup()|, and event handler methods are called by the main class due to Processing program structure.};
 \end{scope}
 \end{tikzpicture}
 %\end{landscape}
 \newpage
 
 \section{Manual}
-The main Processing program will serve as a launcher, allowing the user to select from server or client modes (or, perhaps, both simultaneously, analogous to LAN multiplayer in video games).
+The main Processing program will serve as a launcher, allowing the user to select from server or client modes.
 
 \subsection{Server Mode}
 The user will be able to select a TCP port for the server to broadcast on.
@@ -172,6 +172,7 @@ The goal for the coming week is to begin the initial framework for PRC; implemen
 \subsection{Issues}
 \begin{enumerate}
     \item To share font data among \verb|Text| subclasses, it was appropriate to use \verb|static| variables, but there may be "non-\verb|static| inner type" issues when trying to declare \verb|static| variables in the \verb|Text| abstract class. To fix this, the abstract class itself must be declared \verb|static|. (\href{https://forum.processing.org/two/discussion/23623/when-creating-a-class-what-is-it-an-inner-class-of-declared-static-in-a-non-static-inner-type.html}{Source})
+    \item In testing, it appears that a Client and a Server running in the same PApplet may lead to unexpected behavior. Thus, it will be necessary to run the server separately from the client.
 \end{enumerate}
 
 \section{Log}
@@ -180,6 +181,7 @@ The goal for the coming week is to begin the initial framework for PRC; implemen
     \item 05/21 -- 05/22: Constructed UML class diagrams for anticipated object classes.
     \item 05/23 -- 05/24: Corrected text location alignment issues.
     \item 05/25: Implemented Text subclasses and display() functions; turned Text into an abstract base class to deduplicate logic; Implemented Display and constructed a testing mockup.
+    \item 05/26 -- 05/28: Adjusted UML class designs to provide additional necessary functionality. Began working on network transmission of messages.
 \end{itemize}
 
 \end{document}
