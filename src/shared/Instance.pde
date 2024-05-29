@@ -47,9 +47,10 @@ public class Instance {
     message.put("Content", m.getContent());
     message.put("UUID", uuid);
     client.write(encodePacket(message));
-    sent.add(uuid);
+    sent.add(uuid); //<>//
     instance.screens.get(1).addLine(m);
     screens.get(1).display();
+    println("hrm rhm");
   }
   public void handleServerPacket(byte[] packet) {
     HashMap<String, String> parsed = parsePacket(packet);
@@ -59,6 +60,7 @@ public class Instance {
     for (int i = 0; i < sent.size(); i++) {
       if (sent.get(i).equals(uuid)) {
         sent.remove(i);
+        println("short circuitng");
         return;
       }
     }
@@ -67,8 +69,9 @@ public class Instance {
     if (command.equals("SEND")) {
       // Channel channel = channels.get(getChannel(parsed.get("Channel")));
       Message message = new Message(new User(parsed.get("User"), parsed.get("Host")), parsed.get("Content"));
-      screens.get(1).addLine(message);
+      instance.screens.get(1).addLine(message);
       screens.get(1).display();
+      println("hrmm??");
     }
   }
   public void handleClientPacket(Client session, byte[] packet) {
