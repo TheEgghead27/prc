@@ -82,9 +82,6 @@ void draw() {
       instance.handleClientPacket(client, client.readBytes());
     }
   }
-  for (Display screen: instance.screens) {
-     screen.display();
-  }
 }
 
 void clientEvent(Client client) {
@@ -97,10 +94,10 @@ void keyPressed() {
     instance.input.content = instance.input.content.substring(0, Math.max(instance.input.content.length() - 1, 0));
   if (keyCode == '\n' || keyCode == '\r') {
     Message m = new Message(new User(userNameTmp, "127.0.0.1"), instance.input.content);
-    instance.screens.get(1).addLine(m);
     instance.sendMessage(m);
     instance.input.content = "";
   }
+  instance.screens.get(3).display();
   if (keyCode < ' ' || keyCode >= '\177')  // non-printable ASCII
     return;
   instance.input.content += key;
