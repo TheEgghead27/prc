@@ -48,7 +48,7 @@ Optionally, PRC extensions may include (to be implemented after core functionali
 \section{UML Diagram}
 \begin{tikzpicture}
 \begin{scope}[scale=0.8, transform shape]
-    \begin{abstractclass}[text width = 4cm]{Text}{20,4}
+    \begin{abstractclass}[text width = 4cm]{Text}{20,3}
 	\attribute{+regular: PFont}
 	\attribute{+bold: PFont}
 	\attribute{+italic: PFont}
@@ -60,7 +60,7 @@ Optionally, PRC extensions may include (to be implemented after core functionali
         \operation{+display(int x, int y, int w, String s, color c): int[3]}
         \operation{+display(int x, int y, int w, String s, color c, PFont font): int[3]}
     \end{abstractclass}
-	\umlnote[draw] at (20, 8) (text) {Due to Processing limitations, instance variables (which are static, and initialized in \verb|setup()|) are in a static superclass \verb|TextConstants|.};
+	\umlnote[draw] at (20, -10) (text) {Due to Processing limitations, instance variables (which are static, and initialized in \verb|setup()|) are in a static superclass \verb|TextConstants|.};
 
     \begin{class}[text width = 4cm]{Display}{12,-7}
         \attribute{-width: int}
@@ -70,14 +70,16 @@ Optionally, PRC extensions may include (to be implemented after core functionali
         \operation{+display(): float[2]}
         \operation{+addLine(Text t): void}
         \operation{+removeLine(Text t): boolean}
+        \operation{+getX(): int}
+        \operation{+getY(): int}
     \end{class}
     \unidirectionalAssociation{Display}{lines}{0..*}{Text}
 
-    \begin{class}[text width = 4cm]{Input}{20, -9}
-	\inherit{Display}
+    \begin{class}[text width = 4cm]{Input}{20, 6}
+	\inherit{Text}
 	\attribute{+content: String}
     \end{class}
-    \umlnote[draw] at (20, -11) (input-note) {\verb|content| is public to allow for the key event handler to manipulate its content.};
+    \umlnote[draw] at (20, 8) (input-note) {\verb|content| is public to allow for the key event handler to manipulate its content.};
 
     \begin{class}[text width = 4cm]{User}{12, 8}
         \inherit{Text}
@@ -107,6 +109,8 @@ Optionally, PRC extensions may include (to be implemented after core functionali
     \begin{class}[text width = 4cm]{Message}{20,-7}
         \inherit{Text}
         \attribute{-content: String}
+	\operation{+getAuthor(): User}
+	\operation{+getContent(): String}
     \end{class}
     \association{Channel}{channel}{1}{Message}{0..*}{messages}
     \unidirectionalAssociation{Message}{author}{1}{User}

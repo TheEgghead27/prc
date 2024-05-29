@@ -115,6 +115,12 @@ class Message extends Text {
     ret[1] = tmp[1];
     return ret;
   }
+  public User getAuthor() {
+    return author;
+  }
+  public String getContent() {
+    return content;
+  }
 }
 
 class Channel extends Text {
@@ -154,5 +160,13 @@ class Channel extends Text {
     ret[0] += tmp[0];
     ret[1] = tmp[1];
     return ret;
+  }
+}
+
+
+class Input extends Text {
+  String content = "";
+  int[] display(int x, int y, int w) {
+    return display(x, y, w, content + '_', textColor, regular);
   }
 }

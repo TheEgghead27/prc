@@ -1,5 +1,5 @@
+static final int MARGIN = 6;
 class Display {
-  private static final int MARGIN = 8;
   private int x = 0, y = 0;
   private int dispWidth = 80, dispHeight = 24;  // width and height in characters, disp prefix to avoid namespace collisions with global variables
   private ArrayList<Text> lines = new ArrayList<Text>();
@@ -23,6 +23,12 @@ class Display {
   public void resize(int w, int h) {
       dispWidth = w;
       dispHeight = h;
+  }
+  public int getX() {
+    return x;
+  }
+  public int getY() {
+    return y;
   }
 
   public float[] display() {
