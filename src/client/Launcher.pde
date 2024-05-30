@@ -78,6 +78,9 @@ void draw() {
       instance.handleClientPacket(client, client.readBytes());
     }
   }
+  for (Display screen: instance.screens) {
+    screen.display();
+  }
 }
 
 void clientEvent(Client client) {
@@ -93,7 +96,7 @@ void keyPressed() {
     instance.sendMessage(m);
     instance.input.content = "";
   }
-  instance.screens.get(3).display();
+  instance.screens.get(3).markRerender();
   if (keyCode < ' ' || keyCode >= '\177')  // non-printable ASCII
     return;
   instance.input.content += key;

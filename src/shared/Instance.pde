@@ -70,8 +70,8 @@ public class Instance {
       // Channel channel = channels.get(getChannel(parsed.get("Channel")));
       Message message = new Message(new User(parsed.get("User"), parsed.get("Host")), parsed.get("Content"));
       instance.screens.get(1).addLine(message);
-      screens.get(1).display();
-      println("hrmm??");
+      instance.screens.get(1).display();
+      println("hrmm?? " + parsed.get("Content"));
     }
   }
   public void handleClientPacket(Client session, byte[] packet) {

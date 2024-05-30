@@ -3,6 +3,8 @@ class Display {
   private int x = 0, y = 0;
   private int dispWidth = 80, dispHeight = 24;  // width and height in characters, disp prefix to avoid namespace collisions with global variables
   private ArrayList<Text> lines = new ArrayList<Text>();
+  private static final int FRAMES = 10;
+  int needsRerender = FRAMES - 1;
 
   public Display() {}
   public Display(int x, int y, int w, int h) {
@@ -14,6 +16,7 @@ class Display {
 
   public void addLine(Text line) {
     lines.add(line);
+    markRerender();
   }
 
   public void reposition(int x, int y) {
@@ -30,13 +33,19 @@ class Display {
   public int getY() {
     return y;
   }
+  public void markRerender() {
+    needsRerender = 0;
+  }
 
   public float[] display() {
+    if (needsRerender >= FRAMES) return new float[]{0,0};
+    needsRerender++;
     fill(0);
     stroke(255);
     rect(x, y, dispWidth * Text.fontWidth + 2 * MARGIN, dispHeight * Text.fontSize + 2 * MARGIN);
     int pX = x + MARGIN;
     int pY = y + MARGIN;
+    println("rendering " + lines.size());
     for (Text line: lines) {
       pY += ((line.display(pX, pY, dispWidth))[0] + Text.lineSpace) * Text.fontSize;
     }

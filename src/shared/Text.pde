@@ -9,6 +9,7 @@ static abstract class TextConstants {
 abstract class Text extends TextConstants {
   // width in characters, assuming monospace font
   abstract int[] display(int x, int y, int w);
+  abstract String toString();
 
   int[] display(int x, int y, int w, String s, color c, PFont font) {
     textFont(font);
@@ -79,12 +80,15 @@ class User extends Text {
     return false;
   }
   private void regenerate() {
-    fullname = username + '@' + hostname;
+    fullname = toString();
     int a = 0;
     for (int i = 0; i < fullname.length(); i++) {
       a += fullname.charAt(i) * i;
     }
     userColor = colors[a % colors.length];
+  }
+  String toString() {
+    return username + '@' + hostname;
   }
 }
 
@@ -98,6 +102,7 @@ class Message extends Text {
   }
 
   int[] display(int x, int y, int w) {
+    println("rendering " + this);
     String disp = content;
     int[] ret, tmp;
     ret = author.display(x, y, w);
@@ -119,6 +124,9 @@ class Message extends Text {
     return author;
   }
   public String getContent() {
+    return content;
+  }
+  public String toString() {
     return content;
   }
 }
@@ -149,7 +157,7 @@ class Channel extends Text {
     return false;
   }
   int[] display(int x, int y, int w) {
-    String disp = "#" + name;
+    String disp = toString();
     return display(x, y, w, disp, textColor, bold);
   }
   int[] displayVerbose(int x, int y, int w) {
@@ -161,6 +169,9 @@ class Channel extends Text {
     ret[1] = tmp[1];
     return ret;
   }
+  public String toString() {
+    return "#" + name;
+  }
 }
 
 
@@ -168,5 +179,8 @@ class Input extends Text {
   String content = "";
   int[] display(int x, int y, int w) {
     return display(x, y, w, content + '_', textColor, regular);
+  }
+  public String toString() {
+    return content;
   }
 }
