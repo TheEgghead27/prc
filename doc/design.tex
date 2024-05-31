@@ -55,10 +55,10 @@ Optionally, PRC extensions may include (to be implemented after core functionali
 	\attribute{+fontSize: int}
 	\attribute{+fontWidth: float}
 	\attribute{+lineSpace: float}
-        \operation{+display(int x, int y, int w): int[3]}
-        \operation{+display(int x, int y, int w, String s): int[3]}
-        \operation{+display(int x, int y, int w, String s, color c): int[3]}
-        \operation{+display(int x, int y, int w, String s, color c, PFont font): int[3]}
+        \operation{+display(int x1, int y1, int x2, int y2, int w): int[3]}
+        \operation{+display(int x1, int y1, int x2, int y2, int w, String s): int[3]}
+        \operation{+display(int x1, int y1, int x2, int y2, int w, String s, color c): int[3]}
+        \operation{+display(int x1, int y1, int x2, int y2, int w, String s, color c, PFont font): int[3]}
     \end{abstractclass}
 	\umlnote[draw] at (20, 8) (text) {Due to Processing limitations, instance variables (which are static, and initialized in \verb|setup()|) are in a static superclass \verb|TextConstants|.};
 

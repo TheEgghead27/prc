@@ -28,11 +28,12 @@ class Display {
   public float[] display() {
     fill(0);
     stroke(255);
-    rect(x, y, dispWidth * Text.fontWidth + 2 * MARGIN, dispHeight * Text.fontSize + 2 * MARGIN);
+    int finalWidth = dispWidth * Text.fontWidth + 2 * MARGIN;
+    rect(x, y, , dispHeight * Text.fontSize + 2 * MARGIN);
     int pX = x + MARGIN;
     int pY = y + MARGIN;
     for (Text line: lines) {
-      pY += ((line.display(pX, pY, dispWidth))[0] + Text.lineSpace) * Text.fontSize;
+      pY += ((line.display(pX, pY, , dispWidth))[0] + Text.lineSpace) * Text.fontSize;
     }
     return new float[]{
       x + dispWidth * Text.fontWidth + 2 * MARGIN,
