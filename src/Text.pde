@@ -101,10 +101,10 @@ class Message extends Text {
     String disp = content;
     int[] ret, tmp;
     ret = author.display(x1, y1, x2, y2, w);
-    y += ret[0] * fontSize;
+    y1 += ret[0] * fontSize;
     if (ret[1] > 1) {  // username (+ 1 space) did not take up full row
       // move back a row
-      y -= fontSize;
+      y1 -= fontSize;
       ret[0]--;
 
       disp = new String(new char[ret[1] + 1]).replace('\0', ' ') + disp; // skip the chars in the last row + 1 space
@@ -147,9 +147,9 @@ class Channel extends Text {
     return display(x1, y1, x2, y2, w, disp, textColor, bold);
   }
   int[] displayVerbose(int x1, int y1, int x2, int y2, int w) {
-    int[] ret = display(x, y, w);
+    int[] ret = display(x1, y1, x2, y2, w);
     int[] tmp;
-    y += ret[0] * fontSize;
+    y1 += ret[0] * fontSize;
     tmp = display(x1, y1, x2, y2, w, topic, textColor, regular);
     ret[0] += tmp[0];
     ret[1] = tmp[1];

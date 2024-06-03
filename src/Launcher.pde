@@ -38,7 +38,8 @@ void setup() {
     new Display(500,0, 30, 60),
   };
   for (Text channel: channels) {
-    displays[0].addLine(channel);
+    for (int i = 0; i < 10; i++)
+      displays[0].addLine(channel);
   }
   for (Text message: messages) {
     displays[1].addLine(message);
