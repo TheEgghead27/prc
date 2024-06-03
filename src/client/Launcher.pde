@@ -43,7 +43,6 @@ void setup() {
     displays[2].addLine(user);
   }
   instance = new PRCClient(new Client(this, "127.0.0.1", 2510));
-  instance.input = new Input();
   displays[3].addLine(instance.input);
   float[] buf = null;
   for (Display display: displays) {

@@ -19,9 +19,12 @@ public void initScreen() {
 }
 
 public class Instance {
-  Input input;
+  Input input = new Input();
   ArrayList<Display> screens = new ArrayList<Display>();
   ArrayList<Channel> channels = new ArrayList<Channel>();
+
+  public Instance() {
+  }
  //<>//
   /*
    * Packet structure:
