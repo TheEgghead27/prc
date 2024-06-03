@@ -1,4 +1,4 @@
-Instance instance;
+PRCClient instance;
 final String userNameTmp = "egg";
 
 void setup() {
@@ -42,7 +42,7 @@ void setup() {
   for(Text user: users) {
     displays[2].addLine(user);
   }
-  instance = new Instance(new Client(this, "127.0.0.1", 2510));
+  instance = new PRCClient(new Client(this, "127.0.0.1", 2510));
   instance.input = new Input();
   displays[3].addLine(instance.input);
   float[] buf = null;
@@ -61,19 +61,12 @@ void setup() {
 }
 
 void draw() {
-  if (instance.isServer()) {
-    Client client;
-    if ((client = instance.server.available()) != null) {
-      instance.handleClientPacket(client, client.readBytes());
-    }
-  }
   for (Display screen: instance.screens) {
     screen.display();
   }
 }
 
 void clientEvent(Client client) {
-  if (!instance.isClient()) return;
   instance.handleServerPacket(client.readBytes());
 }
 

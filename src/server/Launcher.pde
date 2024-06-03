@@ -1,4 +1,4 @@
-Instance instance;
+PRCServer instance;
 
 void setup() {
   size(1200,800);
@@ -52,7 +52,7 @@ void setup() {
   for(Text user: users) {
     displays[2].addLine(user);
   }
-  instance = new Instance(new Server(this, 2510), new Client(this, "127.0.0.1", 2510));
+  instance = new PRCServer(new Server(this, 2510));
   instance.input = new Input();
   displays[3].addLine(instance.input);
   float[] buf = null;
@@ -70,14 +70,6 @@ void setup() {
   }
 }
 
-void draw() {
-  if (instance.isServer()) {
-    Client client;
-    if ((client = instance.server.available()) != null) {
-      instance.handleClientPacket(client, client.readBytes());
-    }
-  }
-}
 
 /*
 void serverEvent(Server server, Client client) {

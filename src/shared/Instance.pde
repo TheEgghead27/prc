@@ -19,82 +19,10 @@ public void initScreen() {
 }
 
 public class Instance {
-  Client client;
-  Server server;
-  User session;
   Input input;
-  ArrayList<User> users = new ArrayList<User>();
   ArrayList<Display> screens = new ArrayList<Display>();
   ArrayList<Channel> channels = new ArrayList<Channel>();
-  ArrayList<String> sent = new ArrayList<String>();
-  public Instance(Client c) {
-    client = c;
-  }
-  public Instance(Server s) {
-    server = s;
-  }
-  public Instance(Server s, Client c) {
-    client = c;
-    server = s;
-  }
-  public boolean isClient() {
-    return client != null;
-  }
-  public boolean isServer() {
-    return server != null;
-  }
-  public void handleConnect(Client session) {
-    // only one session allowed per ip
-    if (STRICT)
-      for (User u: users) {
-        if (session.ip().equals(u.getHostname()))
-          server.disconnect(session);
-      }
-  }
-
-  public void sendMessage(Message m) {
-    HashMap<String, String> message = new HashMap<String, String>();
-    String uuid = "" + Math.random();
-    message.put("Command", "SEND");
-    message.put("User", m.getAuthor().getUsername());
-    message.put("Host", m.getAuthor().getHostname());
-    message.put("Content", m.getContent());
-    message.put("UUID", uuid);
-    client.write(encodePacket(message));
-    sent.add(uuid); //<>//
-    instance.screens.get(1).addLine(m);
-    screens.get(1).display();
-    println("hrm rhm");
-  }
-  public void handleServerPacket(byte[] packet) {
-    HashMap<String, String> parsed = parsePacket(packet);
-
-    // skip packets we sent
-    String uuid = parsed.getOrDefault("UUID", "");
-    for (int i = 0; i < sent.size(); i++) {
-      if (sent.get(i).equals(uuid)) {
-        sent.remove(i);
-        println("short circuitng");
-        return;
-      }
-    }
-
-    String command = parsed.getOrDefault("Command", "");
-    if (command.equals("SEND")) {
-      // Channel channel = channels.get(getChannel(parsed.get("Channel")));
-      Message message = new Message(new User(parsed.get("User"), parsed.get("Host")), parsed.get("Content"));
-      instance.screens.get(1).addLine(message);
-      instance.screens.get(1).display();
-      println("hrmm?? " + parsed.get("Content"));
-    }
-  }
-  public void handleClientPacket(Client session, byte[] packet) {
-    // as of right now, all packets are passed right back to clients with minimal validation (this is a bad idea)
-    HashMap<String, String> parsed = parsePacket(packet);
-    // parsed.put("Host", session.ip());
-    server.write(encodePacket(parsed));
-    println("DEBUG: " + encodePacket(parsed));
-  }
+ //<>//
   /*
    * Packet structure:
    * Command\037SEND\036Data\037Name2\036..
