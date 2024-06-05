@@ -33,39 +33,19 @@ void setup() {
     */
   };
   Channel[] channels = new Channel[] {
+    new Channel("## SERVER MODE ###", "Lazy indicator status"),
     new Channel("apcsa", "chatroom for APCSA students"),
     new Channel("dojo", "chatroom for all StuyCS students")
   };
-  Display messageBox = new Display(200,0, 80, 58);
-  Display[] displays = new Display[]{
-    new Display(0, 0, 20, 60),
-    messageBox,
-    new Display(500,0, 30, 60),
-    new Display(160, 700, 80, 1)
-  };
+  instance = new PRCServer(new Server(this, 2510));
   for (Text channel: channels) {
-    displays[0].addLine(channel);
+    instance.screens.get(0).addLine(channel);
   }
   for (Text message: messages) {
-    displays[1].addLine(message);
+    instance.screens.get(1).addLine(message);
   }
   for(Text user: users) {
-    displays[2].addLine(user);
-  }
-  instance = new PRCServer(new Server(this, 2510));
-  displays[3].addLine(instance.input);
-  float[] buf = null;
-  for (Display display: displays) {
-    if (buf != null) {
-      if (display != displays[3])
-        display.reposition((int)buf[0], 0);
-
-    }
-    buf = display.display();
-    instance.screens.add(display);
-    if (display == messageBox) {
-      displays[3].reposition(messageBox.getX(), (int) buf[1]);
-    }
+    instance.screens.get(3).addLine(user);
   }
 }
 

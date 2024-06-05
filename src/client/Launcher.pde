@@ -26,65 +26,9 @@ void setup() {
     new Channel("apcsa", "chatroom for APCSA students"),
     new Channel("dojo", "chatroom for all StuyCS students")
   };
-  Display messageBox = new Display(200,0, 80, 58);
-  Display[] displays = new Display[]{
-    new Display(0, 0, 20, 60),
-    messageBox,
-    new Display(500,0, 30, 60),
-    new Display(160, 700, 80, 1)
-  };
-  for (Text channel: channels) {
-    displays[0].addLine(channel);
-  }
-  for (Text message: messages) {
-    displays[1].addLine(message);
-  }
-  for(Text user: users) {
-    displays[2].addLine(user);
-  }
   instance = new PRCClient(new Client(this, "127.0.0.1", 2510));
-  displays[3].addLine(instance.input);
-  float[] buf = null;
-  for (Display display: displays) {
-    if (buf != null) {
-      if (display != displays[3])
-        display.reposition((int)buf[0], 0);
-
-    }
-    buf = display.display();
-    instance.screens.add(display);
-    if (display == messageBox) {
-      displays[3].reposition(messageBox.getX(), (int) buf[1]);
-    }
-  }
-}
-
-void draw() {
-  for (Display screen: instance.screens) {
-    screen.display();
-  }
 }
 
 void clientEvent(Client client) {
   instance.handleServerPacket(client.readBytes());
 }
-
-void keyPressed() {
-  if (keyCode == '\177' || keyCode == '\b')
-    instance.input.content = instance.input.content.substring(0, Math.max(instance.input.content.length() - 1, 0));
-  if (keyCode == '\n' || keyCode == '\r') {
-    Message m = new Message(new User(userNameTmp, "127.0.0.1"), instance.input.content);
-    instance.sendMessage(m);
-    instance.input.content = "";
-  }
-  instance.screens.get(3).markRerender();
-  if (keyCode < ' ' || keyCode >= '\177')  // non-printable ASCII
-    return;
-  instance.input.content += key;
-}
-/*
-void serverEvent(Server server, Client client) {
-  if (!instance.isServer()) return;
-  instance.handleClientPacket(client, client.readBytes());
-}
-*/

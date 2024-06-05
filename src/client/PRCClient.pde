@@ -43,4 +43,10 @@ public class PRCClient extends Instance {  // "PRC Client"
       println("hrmm?? " + parsed.get("Content"));
     }
   }
+  public boolean executeCallback() {
+    Message m = new Message(new User(userNameTmp, "127.0.0.1"), getInput());
+    sendMessage(m);
+    setInput("");
+    return true;
+  }
 }

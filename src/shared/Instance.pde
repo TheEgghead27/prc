@@ -3,6 +3,12 @@ import processing.net.Server;
 
 final boolean STRICT = false;
 
+void draw() {
+  for (Display screen: instance.screens) {
+    screen.display();
+  }
+}
+
 public void initScreen() {
   background(0);
 
@@ -18,12 +24,46 @@ public void initScreen() {
   Text.fontWidth = textWidth(" ");  // monospace font means we can assume this is uniform
 }
 
+void keyPressed() {
+  if (keyCode == '\177' || keyCode == '\b')
+    instance.setInput(instance.getInput().substring(0, Math.max(instance.getInput().length() - 1, 0)));
+  if (keyCode == '\n' || keyCode == '\r') {
+    instance.executeCallback();
+  }
+  instance.screens.get(3).markRerender();
+  if (keyCode < ' ' || keyCode >= '\177')  // non-printable ASCII
+    return;
+  instance.setInput(instance.getInput() + key);
+}
+
 public class Instance {
-  Input input = new Input();
+  private Input input = new Input();
   ArrayList<Display> screens = new ArrayList<Display>();
   ArrayList<Channel> channels = new ArrayList<Channel>();
+  Display inputDisp;
+  Display messageDisp;
+  Display channelDisp;
+  Display userDisp;
 
   public Instance() {
+    screens.add(channelDisp = new Display(0, 0, 20, 60));
+    screens.add(messageDisp = new Display(0, 0, 80, 58));
+    screens.add(inputDisp = new Display(0, 0, 80, 1));
+    inputDisp.addLine(input);
+    screens.add(userDisp = new Display(0, 0, 30, 60));
+
+    float[] buf = null;
+    for (Display display: screens) {
+      if (buf != null) {
+        if (display == inputDisp) {
+          display.reposition(messageDisp.getX(), (int)buf[1]);
+        }
+        else {
+          display.reposition((int)buf[0], 0);
+        }
+      }
+      buf = display.display();
+    }
   }
  //<>//
   /*
@@ -115,6 +155,21 @@ public class Instance {
     int i;
     if ((i = getChannel(channelName)) > -1) {
       channels.remove(i);
+      return true;
+    }
+    return false;
+  }
+  public String getInput() {
+    return input.content;
+  }
+  public void setInput(String newInput) {
+    input.content = newInput;
+    inputDisp.markRerender();
+  }
+  public boolean executeCallback() {
+    if (input.content.startsWith("/")) {
+      println("SLASH COMMAND!!!");
+      setInput("");
       return true;
     }
     return false;

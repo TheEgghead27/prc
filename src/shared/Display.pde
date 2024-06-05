@@ -45,7 +45,6 @@ class Display {
     rect(x, y, dispWidth * Text.fontWidth + 2 * MARGIN, dispHeight * Text.fontSize + 2 * MARGIN);
     int pX = x + MARGIN;
     int pY = y + MARGIN;
-    println("rendering " + lines.size());
     for (Text line: lines) {
       pY += ((line.display(pX, pY, dispWidth))[0] + Text.lineSpace) * Text.fontSize;
     }
