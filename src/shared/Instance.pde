@@ -44,6 +44,7 @@ public class Instance {
   Display messageDisp;
   Display channelDisp;
   Display userDisp;
+  private User SYSUSER = new User("***SYSTEM***", null);
 
   public Instance() {
     screens.add(channelDisp = new Display(0, 0, 20, 60));
@@ -64,7 +65,7 @@ public class Instance {
       }
       buf = display.display();
     }
-  }
+  } //<>//
  //<>//
   /*
    * Packet structure:
@@ -166,9 +167,23 @@ public class Instance {
     input.content = newInput;
     inputDisp.markRerender();
   }
+  private String[] helpText = new String[]{
+    "Processing Relay Chat",
+    "Usage: /<command>",
+    "/help: Shows this help text",
+    "/quit: Quits the program"
+  };
   public boolean executeCallback() {
     if (input.content.startsWith("/")) {
       println("SLASH COMMAND!!!");
+      if (input.content.startsWith("/quit")) {
+        exit();
+      }
+      if (input.content.startsWith("/help")) {
+        for (String line: helpText)
+          messageDisp.addLine(new Message(SYSUSER, line));
+      }
+      messageDisp.markRerender();
       setInput("");
       return true;
     }

@@ -44,6 +44,7 @@ public class PRCClient extends Instance {  // "PRC Client"
     }
   }
   public boolean executeCallback() {
+    if (super.executeCallback()) return true;  // early exit if command was sent
     Message m = new Message(new User(userNameTmp, "127.0.0.1"), getInput());
     sendMessage(m);
     setInput("");
