@@ -18,9 +18,18 @@ public class PRCServer extends Instance {
   public void handleClientPacket(Client session, byte[] packet) {
     // as of right now, all packets are passed right back to clients with minimal validation (this is a bad idea)
     HashMap<String, String> parsed = super.parsePacket(packet);
-    // parsed.put("Host", session.ip());
-    server.write(super.encodePacket(parsed));
-    println("DEBUG: " + super.encodePacket(parsed));
+    String command = parsed.getOrDefault("Command", "");
+    if (command.equals("SEND"))
+      server.write(super.encodePacket(parsed));
+    else if (command.equals("NAME")) {
+      if (parsed.get("User") == null)
+        parsed.put("User", "Guest" + users.size());
+      parsed.put("Host", session.ip());
+      users.add(new User(parsed.get("User"), parsed.get("Host")));  // TODO: remove defunct sessions
+      session.write(super.encodePacket(parsed));
+      println("registered user " + users.get(users.size() - 1));
+    }
+    // println("DEBUG: " + super.encodePacket(parsed));
   }
   public boolean executeCallback() {
     if (super.executeCallback()) return true;

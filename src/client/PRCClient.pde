@@ -5,6 +5,16 @@ public class PRCClient extends Instance {  // "PRC Client"
   public PRCClient(Client c) {
     super();
     netClient = c;
+    registerUser();
+  }
+  private void registerUser() {
+    registerUser("Guest");
+  }
+  private void registerUser(String username) {
+    HashMap<String, String> packet = new HashMap<String, String>();
+    packet.put("Command", "NAME");
+    packet.put("User", username);
+    netClient.write(super.encodePacket(packet));
   }
   public void sendMessage(Message m) {
     HashMap<String, String> message = new HashMap<String, String>();
@@ -18,7 +28,6 @@ public class PRCClient extends Instance {  // "PRC Client"
     sent.add(uuid);
     instance.screens.get(1).addLine(m);
     screens.get(1).display();
-    println("hrm rhm");
   }
 
   public void handleServerPacket(byte[] packet) {
@@ -42,10 +51,16 @@ public class PRCClient extends Instance {  // "PRC Client"
       instance.screens.get(1).display();
       println("hrmm?? " + parsed.get("Content"));
     }
+    else if (command.equals("NAME")) {
+      session = new User(parsed.getOrDefault("User", "404"), parsed.getOrDefault("Host", "0"));
+      println("registered username" + session);
+    }
   }
   public boolean executeCallback() {
     if (super.executeCallback()) return true;  // early exit if command was sent
-    Message m = new Message(new User(userNameTmp, "127.0.0.1"), getInput());
+    if (session == null) sysPrint("Please register a username!");
+    println(session);
+    Message m = new Message(session, getInput());
     sendMessage(m);
     setInput("");
     return true;

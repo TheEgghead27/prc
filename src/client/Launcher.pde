@@ -1,5 +1,4 @@
 PRCClient instance;
-final String userNameTmp = "egg";
 
 void setup() {
   size(1200,800);
