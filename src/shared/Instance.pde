@@ -36,6 +36,12 @@ void keyPressed() {
   instance.setInput(instance.getInput() + key);
 }
 
+interface Command {
+  public abstract String getName();
+  public abstract String getHelp();
+  public abstract void execute(String[] args);
+}
+
 public class Instance {
   private Input input = new Input();
   ArrayList<Display> screens = new ArrayList<Display>();
@@ -44,9 +50,13 @@ public class Instance {
   Display messageDisp;
   Display channelDisp;
   Display userDisp;
+  ArrayList<Command> commands = new ArrayList<Command>(2);
   private User SYSUSER = new User("***SYSTEM***", null);
 
   public Instance() {
+    commands.add(new Quit());
+    commands.add(new Help());
+
     screens.add(channelDisp = new Display(0, 0, 20, 60));
     screens.add(messageDisp = new Display(0, 0, 80, 58));
     screens.add(inputDisp = new Display(0, 0, 80, 1));
@@ -55,7 +65,7 @@ public class Instance {
 
     float[] buf = null;
     for (Display display: screens) {
-      if (buf != null) {
+      if (buf != null) { //<>//
         if (display == inputDisp) {
           display.reposition(messageDisp.getX(), (int)buf[1]);
         }
@@ -65,7 +75,7 @@ public class Instance {
       }
       buf = display.display();
     }
-  } //<>//
+  }
  //<>//
   /*
    * Packet structure:
@@ -167,26 +177,50 @@ public class Instance {
     input.content = newInput;
     inputDisp.markRerender();
   }
-  private String[] helpText = new String[]{
-    "Processing Relay Chat",
-    "Usage: /<command>",
-    "/help: Shows this help text",
-    "/quit: Quits the program"
-  };
   public boolean executeCallback() {
     if (input.content.startsWith("/")) {
-      println("SLASH COMMAND!!!");
-      if (input.content.startsWith("/quit")) {
-        exit();
+      String[] args = input.content.substring(1).split(" ");
+      if (args.length == 0) return false;
+      for (Command c: commands) {
+        if (args[0].equals(c.getName())) {
+          c.execute(args);
+          break;
+        }
       }
-      if (input.content.startsWith("/help")) {
-        for (String line: helpText)
-          messageDisp.addLine(new Message(SYSUSER, line));
-      }
-      messageDisp.markRerender();
       setInput("");
       return true;
     }
     return false;
+  }
+  public void sysPrint(String line) {
+    messageDisp.addLine(new Message(SYSUSER, line));
+    messageDisp.markRerender();
+  }
+
+  public class Quit implements Command {
+    public String getName() {
+      return "quit";
+    }
+    public String getHelp() {
+      return "Quits the program";
+    }
+    public void execute(String[] args) {
+      exit();
+    }
+  }
+
+  public class Help implements Command {
+    public String getName() {
+      return "help";
+    }
+    public String getHelp() {
+      return "Shows this help text";
+    }
+    public void execute(String[] args) {
+      sysPrint("Processing Relay Chat");
+      sysPrint("Usage: /<command>");
+      for (Command c: commands)
+        sysPrint("/" + c.getName() + ": " + c.getHelp());
+    }
   }
 }

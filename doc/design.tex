@@ -116,7 +116,7 @@ Optionally, PRC extensions may include (to be implemented after core functionali
     \unidirectionalAssociation{Message}{author}{1}{User}
 
     \begin{abstractclass}{Command}{3,-8}
-        \attribute{-helpInfo: String}
+        \operation{+getName(): String}
         \operation{+getHelp(): String}
         \operation{+execute(String[] args): void}
     \end{abstractclass}
