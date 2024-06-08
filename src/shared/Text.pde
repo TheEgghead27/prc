@@ -10,7 +10,10 @@ abstract class Text extends TextConstants {
   // width in characters, assuming monospace font
   abstract int[] display(int x, int y, int w);
   abstract String toString();
-
+  
+  boolean equals(Text other) {
+    return this.toString().equals(other.toString());
+  }
   int[] display(int x, int y, int w, String s, color c, PFont font) {
     textFont(font);
     return display(x, y, w, s, c);

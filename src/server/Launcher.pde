@@ -44,15 +44,4 @@ void setup() {
   for (Text message: messages) {
     instance.screens.get(1).addLine(message);
   }
-  for(Text user: users) {
-    instance.screens.get(3).addLine(user);
-  }
 }
-
-
-/*
-void serverEvent(Server server, Client client) {
-  if (!instance.isServer()) return;
-  instance.handleClientPacket(client, client.readBytes());
-}
-*/

@@ -1,3 +1,8 @@
+void serverEvent(Server server, Client client) {
+  instance.handleClientPacket(client, client.readBytes());
+}
+
+
 public class PRCServer extends Instance {
   Server server;
   ArrayList<User> users = new ArrayList<User>();
@@ -16,18 +21,48 @@ public class PRCServer extends Instance {
   }
 
   public void handleClientPacket(Client session, byte[] packet) {
-    // as of right now, all packets are passed right back to clients with minimal validation (this is a bad idea)
-    HashMap<String, String> parsed = super.parsePacket(packet);
-    String command = parsed.getOrDefault("Command", "");
+    HashMap<String, String> parsed;
+    if (packet != null) parsed = super.parsePacket(packet);
+    else {
+       parsed = new HashMap<String, String>();
+       parsed.put("Command", "QUIT");
+    }
+    println("packet" + parsed.get("Command"));
+    
+    String command = parsed.getOrDefault("Command", "UNDEF");
     if (command.equals("SEND"))
       server.write(super.encodePacket(parsed));
     else if (command.equals("NAME")) {
       if (parsed.get("User") == null)
         parsed.put("User", "Guest" + users.size());
       parsed.put("Host", session.ip());
-      users.add(new User(parsed.get("User"), parsed.get("Host")));  // TODO: remove defunct sessions
+      User u = new User(parsed.get("User"), parsed.get("Host"));
+      for (int i = 0; i < users.size(); i++) {
+        if (users.get(i).equals(u)) {
+          if (!parsed.get("Old User").equals(""))
+            return;  // we can skip
+          else {
+            userDisp.removeLine(users.remove(i));
+            break;
+          }
+        }
+        if (users.get(i).getHostname() == parsed.get("User") && users.get(i).getUsername() == parsed.get("Old User")) {
+          userDisp.removeLine(users.remove(i));
+          break;
+        }
+      }
+      users.add(u);
+      userDisp.addLine(u);
       session.write(super.encodePacket(parsed));
       println("registered user " + users.get(users.size() - 1));
+    }
+    else if (command.equals("QUIT")) {
+      for (int i = 0; i < users.size(); i++) {
+        if (users.get(i).getHostname().equals(session.ip())) {
+          userDisp.removeLine(users.remove(i));
+          break;
+        }
+      }
     }
     else {
       sysPrint("Unknown command " + command);

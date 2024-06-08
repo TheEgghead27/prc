@@ -55,6 +55,7 @@ Optionally, PRC extensions may include (to be implemented after core functionali
         \attribute{+fontSize: int}
         \attribute{+fontWidth: float}
         \attribute{+lineSpace: float}
+        \operation{+equals(Text other): boolean}
         \operation{+display(int x, int y, int w): int[3]}
         \operation{+display(int x, int y, int w, String s): int[3]}
         \operation{+display(int x, int y, int w, String s, color c): int[3]}
@@ -134,8 +135,9 @@ Optionally, PRC extensions may include (to be implemented after core functionali
         \operation{+setInput(String newInput): void}
         \operation{+executeCallback(): boolean}
         \operation{+draw(): void}
+        \operation{+addCommand(Command c): void}
+        \operation{+encodePacket(HashMap<String, String> src): String}
         \operation{-parsePacket(byte[] packet): HashMap<String, String>}
-        \operation{-encodePacket(HashMap<String, String> src): String}
     \end{class}
     \begin{class}{PRCServer}{6, 2}
         \inherit{Instance}

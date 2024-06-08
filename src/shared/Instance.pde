@@ -29,7 +29,7 @@ void keyPressed() {
     instance.executeCallback();
   }
   instance.screens.get(3).markRerender();
-  if (keyCode < ' ' || keyCode >= '\177')  // non-printable ASCII
+  if (key < ' ' || key >= '\177')  // non-printable ASCII
     return;
   instance.setInput(instance.getInput() + key);
 }
@@ -63,7 +63,7 @@ public class Instance {
 
     float[] buf = null;
     for (Display display: screens) {
-      if (buf != null) { //<>//
+      if (buf != null) { //<>// //<>//
         if (display == inputDisp) {
           display.reposition(messageDisp.getX(), (int)buf[1]);
         }
@@ -74,7 +74,7 @@ public class Instance {
       buf = display.display();
     }
   }
- //<>//
+ //<>// //<>//
   /*
    * Packet structure:
    * Command\037SEND\036Data\037Name2\036..
@@ -135,7 +135,7 @@ public class Instance {
        println("Packet not terminated correctly :(");
      return buf;
   }
-  private String encodePacket(HashMap<String, String> src) {
+  public String encodePacket(HashMap<String, String> src) {
     String buf = "";
     int row = 0;
     for (String rowKey : src.keySet()) {
@@ -197,6 +197,9 @@ public class Instance {
   public void draw() {
     for (Display screen: screens)
       screen.display();
+  }
+  public void addCommand(Command c) {
+    commands.add(c);
   }
 
   public class Quit implements Command {

@@ -18,6 +18,15 @@ class Display {
     lines.add(line);
     markRerender();
   }
+  public boolean removeLine(Text line) {
+    for (int i = 0; i < lines.size(); i++) {
+      if (lines.get(i).equals(line)) {
+        lines.remove(i);
+        return true;
+      }
+    }
+    return false;
+  }
 
   public void reposition(int x, int y) {
     this.x = x;
