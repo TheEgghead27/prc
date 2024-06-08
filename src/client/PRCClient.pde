@@ -143,7 +143,7 @@ public class PRCClient extends Instance {  // "PRC Client"
       netClient.write(encodePacket(packet));
       sysPrint("SENT JOIN #" + c);
       curChannel = c;
-      channelLabel.removeLine();
+      channelLabel.clear();
       channelLabel.addLine(new Channel(curChannel));
     }
   }
