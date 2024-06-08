@@ -28,13 +28,20 @@ public class PRCServer extends Instance {
     String command = parsed.getOrDefault("Command", "UNDEF");
         sysPrint("GOT PACKET: " + command);
 
-    if (command.equals("SEND"))
+    parsed.put("Host", session.ip());
+    if (command.equals("SEND")) {
+      for (String reqHeader: new String[]{"User", "Content", "Channel"}) {
+        if (parsed.get(reqHeader) == null || parsed.get(reqHeader).length() == 0) {
+          session.write(error(reqHeader + " header not specified."));
+          return;
+        }
+      }
       server.write(super.encodePacket(parsed));
+    }
 
     else if (command.equals("NAME")) {
       if (parsed.get("User") == null)
         parsed.put("User", "Guest" + users.size());
-      parsed.put("Host", session.ip());
       User u = new User(constrainString(parsed.get("User"), 10), parsed.get("Host"));
       for (int i = 0; i < users.size(); i++) {
         if (users.get(i).equals(u)) {
