@@ -66,7 +66,6 @@ public class PRCClient extends Instance {  // "PRC Client"
       // Channel channel = channels.get(getChannel(parsed.get("Channel")));
       Message message = new Message(new User(parsed.get("User"), parsed.get("Host")), parsed.get("Content"));
       messageDisp.addLine(message);
-      println("hrmm?? " + parsed.get("Content"));
     }
 
     else if (command.equals("NAME")) {
@@ -97,7 +96,6 @@ public class PRCClient extends Instance {  // "PRC Client"
       sysPrint("No username registration detected; are we connected to the server?");
       return false;
     }
-    println(session);
     Message m = new Message(session, getInput());
     sendMessage(m);
     setInput("");

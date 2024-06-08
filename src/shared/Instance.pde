@@ -125,7 +125,7 @@ public class Instance {
            /* fallthrough */
          case '\036':
            if (!isValue)
-             println("Malformed row :(");
+             sysPrint("Parse error: Malformed row :(");
            buf.put(name, value);
            name = "";
            value = "";
@@ -133,7 +133,7 @@ public class Instance {
            break;
          case '\037':
            if (isValue)
-             println("Malformed row :(");
+             sysPrint("Parse error: Malformed row :(");
            isValue = true;
            break;
          default:
@@ -149,7 +149,7 @@ public class Instance {
        index++;
      }
      if (index == packet.length)
-       println("Packet not terminated correctly :(");
+       sysPrint("Parse error: Packet not terminated correctly :(");
      return buf;
   }
   public String encodePacket(HashMap<String, String> src) {
