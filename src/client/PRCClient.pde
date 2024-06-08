@@ -7,6 +7,8 @@ void clientEvent(Client client) {
 public class PRCClient extends Instance {  // "PRC Client"
   Client netClient;
   User session;
+  String curChannel;
+
   private boolean ready = false;
   ArrayList<String> sent = new ArrayList<String>();
   public PRCClient(Client c) {
@@ -142,6 +144,9 @@ public class PRCClient extends Instance {  // "PRC Client"
       appendUUID(packet);
       netClient.write(encodePacket(packet));
       sysPrint("SENT JOIN #" + c);
+      curChannel = c;
+      channelLabel.removeLine();
+      channelLabel.addLine(new Channel(curChannel));
     }
   }
 }

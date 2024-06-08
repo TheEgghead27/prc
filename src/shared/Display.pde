@@ -18,6 +18,10 @@ class Display {
     lines.add(line);
     markRerender();
   }
+  public void removeLine() {
+    if (lines.size() > 0)
+      lines.remove(0);
+  }
   public boolean removeLine(Text line) {
     for (int i = 0; i < lines.size(); i++) {
       if (lines.get(i).equals(line)) {

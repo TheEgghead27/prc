@@ -62,6 +62,7 @@ public class Instance {
   Display inputDisp;
   Display messageDisp;
   Display channelDisp;
+  Display channelLabel;
   Display userDisp;
   ArrayList<Channel> channels = new ArrayList<Channel>();
   ArrayList<Command> commands = new ArrayList<Command>(2);
@@ -71,23 +72,24 @@ public class Instance {
     commands.add(new Help());
 
     screens.add(channelDisp = new Display(0, 0, 20, 60));
-    screens.add(messageDisp = new Display(0, 0, 80, 58));
+    screens.add(channelLabel = new Display(0, 0, 80, 1));
+    screens.add(messageDisp = new Display(0, 0, 80, 56));
     screens.add(inputDisp = new Display(0, 0, 80, 1));
     inputDisp.addLine(input);
     screens.add(userDisp = new Display(0, 0, 30, 60));
 
-    float[] buf = null;
+    float[] buf = null; //<>//
     for (Display display: screens) {
-      if (buf != null) { //<>//
-        if (display == inputDisp) {
-          display.reposition(messageDisp.getX(), (int)buf[1]);
+      if (buf != null) {
+        if (display == messageDisp || display == inputDisp) {
+          display.reposition(channelLabel.getX(), (int)buf[1]);
         }
         else {
           display.reposition((int)buf[0], 0);
         }
       }
       buf = display.display();
-    }
+    } //<>//
   }
  //<>//
   /*

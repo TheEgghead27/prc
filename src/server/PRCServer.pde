@@ -5,6 +5,7 @@ public class PRCServer extends Instance {
   public PRCServer(Server s) {
     server = s;
     super.addCommand(new ServerQuit());
+    channelLabel.addLine(new Channel("## SERVER MODE ###"));
   }
 
   public void handleConnect(Client session) {
