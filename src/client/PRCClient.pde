@@ -22,7 +22,7 @@ public class PRCClient extends Instance {  // "PRC Client"
     j.execute(new String[]{"", "general"});
   }
   private void registerUser() {
-    registerUser("Guest");
+    registerUser("");
   }
   private void registerUser(String username) {
       HashMap<String, String> packet = new HashMap<String, String>();
@@ -38,7 +38,7 @@ public class PRCClient extends Instance {  // "PRC Client"
     message.put("User", m.getAuthor().getUsername());
     message.put("Host", m.getAuthor().getHostname());
     message.put("Content", m.getContent());
-    appendUUID(message);
+    message.put("Channel", curChannel);
     netClient.write(super.encodePacket(message));
   }
   private void appendUUID(HashMap<String, String> packet) {
