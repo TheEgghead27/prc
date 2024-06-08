@@ -136,42 +136,19 @@ class Message extends Text {
 
 class Channel extends Text {
   private String name;
-  private String topic;
   public Channel(String n) {
     name = n;
-    topic = "";
-  }
-  public Channel(String n, String t) {
-    name = n;
-    topic = t;
   }
 
   String getName() {
     return name;
   }
-  String getTopic() {
-    return topic;
-  }
-  boolean setTopic(String newTopic) {
-    if (newTopic.length() > 0) {
-      topic = newTopic;
-      return true;
-    }
-    return false;
-  }
+
   int[] display(int x, int y, int w) {
     String disp = toString();
     return display(x, y, w, disp, textColor, bold);
   }
-  int[] displayVerbose(int x, int y, int w) {
-    int[] ret = display(x, y, w);
-    int[] tmp;
-    y += ret[0] * fontSize;
-    tmp = display(x, y, w, topic, textColor, regular);
-    ret[0] += tmp[0];
-    ret[1] = tmp[1];
-    return ret;
-  }
+
   public String toString() {
     return "#" + name;
   }

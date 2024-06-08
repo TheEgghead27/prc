@@ -94,14 +94,7 @@ PRC uses a JSON-like TCP packet schema, in which ASCII separator characters are 
     \begin{class}[text width = 4cm]{Channel}{12,2}
         \inherit{Text}
         \attribute{-name: String}
-        \attribute{-topic: String}
-        \operation{+displayVerbose(int x, int y, int w): int[3]}
         \operation{+getName(): String}
-        \operation{+getTopic(): String}
-        \operation{+setTopic(String newTopic): boolean}
-        \operation{+addUser(User u): void}
-        \operation{+removeUser(String username): boolean}
-        \operation{+addMessage(Message m): void}
     \end{class}
     \unidirectionalAssociation{Channel}{users}{0..*}{User}
 
