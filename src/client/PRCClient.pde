@@ -88,14 +88,33 @@ public class PRCClient extends Instance {  // "PRC Client"
         sysPrint("`/nick`: Please provide a nickname (up to 10 characters long).");
         return;
       }
-      String username = (args[1].length() > 10 ? args[1].substring(0,10) : args[1]);
-      registerUser(username);
+      registerUser(constrainString(args[1], 10));
     }
   }
   public class ClientQuit extends Quit {
     void execute(String[] args) {
       netClient.stop();  // boy do I wish this were in an interface
       exit();
+    }
+  }
+  public class Join implements Command {
+    public String getName() {
+      return "join";
+    }
+    public String getHelp() {
+      return "Joins a channel, or creates it if there is not one. Channel names may not exceed 10 characters.";
+    }
+    public void execute(String[] args) {
+      if (args.length < 2 || args[1].length() < 1) {
+        sysPrint("`/join`: Please provide a channel name (up to 10 characters long).");
+        return;
+      }
+      HashMap<String, String> packet = new HashMap<String, String>();
+      packet.put("Command", "JOIN");
+      packet.put("User", session.getUsername());
+      packet.put("Channel", constrainString(args[1], 10));
+      appendUUID(packet);
+      netClient.write(encodePacket(packet));
     }
   }
 }

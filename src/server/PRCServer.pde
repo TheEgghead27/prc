@@ -32,7 +32,7 @@ public class PRCServer extends Instance {
       if (parsed.get("User") == null)
         parsed.put("User", "Guest" + users.size());
       parsed.put("Host", session.ip());
-      User u = new User(parsed.get("User"), parsed.get("Host"));
+      User u = new User(constrainString(parsed.get("User"), 10), parsed.get("Host"));
       for (int i = 0; i < users.size(); i++) {
         if (users.get(i).equals(u)) {
           if (!parsed.get("Old User").equals(""))
@@ -42,7 +42,9 @@ public class PRCServer extends Instance {
             break;
           }
         }
-        if (users.get(i).getHostname() == parsed.get("User") && users.get(i).getUsername() == parsed.get("Old User")) {
+        println(parsed.get("Old User") + "!");
+        if (users.get(i).getHostname().equals(u.getHostname()) && users.get(i).getUsername().equals(parsed.get("Old User"))) {
+          println("removing old user");
           userDisp.removeLine(users.remove(i));
           break;
         }

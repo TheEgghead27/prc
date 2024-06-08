@@ -40,6 +40,10 @@ interface Command {
   public abstract void execute(String[] args);
 }
 
+public static String constrainString(String s, int l) {
+  return (s.length() > l ? s.substring(0,l) : s);
+}
+
 public class Instance {
   private Input input = new Input();
   ArrayList<Display> screens = new ArrayList<Display>();
