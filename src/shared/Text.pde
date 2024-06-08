@@ -88,6 +88,7 @@ class User extends Text {
     userColor = colors[a % colors.length];
   }
   String toString() {
+    if (hostname == null) return username;
     return username + '@' + hostname;
   }
 }
@@ -102,7 +103,6 @@ class Message extends Text {
   }
 
   int[] display(int x, int y, int w) {
-    println("rendering " + this);
     String disp = content;
     int[] ret, tmp;
     ret = author.display(x, y, w);

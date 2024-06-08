@@ -3,6 +3,12 @@ import processing.net.Server;
 
 final boolean STRICT = false;
 
+void draw() {
+  for (Display screen: instance.screens) {
+    screen.display();
+  }
+}
+
 public void initScreen() {
   background(0);
 
@@ -18,83 +24,59 @@ public void initScreen() {
   Text.fontWidth = textWidth(" ");  // monospace font means we can assume this is uniform
 }
 
+void keyPressed() {
+  if (keyCode == '\177' || keyCode == '\b')
+    instance.setInput(instance.getInput().substring(0, Math.max(instance.getInput().length() - 1, 0)));
+  if (keyCode == '\n' || keyCode == '\r') {
+    instance.executeCallback();
+  }
+  instance.screens.get(3).markRerender();
+  if (keyCode < ' ' || keyCode >= '\177')  // non-printable ASCII
+    return;
+  instance.setInput(instance.getInput() + key);
+}
+
+interface Command {
+  public abstract String getName();
+  public abstract String getHelp();
+  public abstract void execute(String[] args);
+}
+
 public class Instance {
-  Client client;
-  Server server;
-  User session;
-  Input input;
-  ArrayList<User> users = new ArrayList<User>();
+  private Input input = new Input();
   ArrayList<Display> screens = new ArrayList<Display>();
   ArrayList<Channel> channels = new ArrayList<Channel>();
-  ArrayList<String> sent = new ArrayList<String>();
-  public Instance(Client c) {
-    client = c;
-  }
-  public Instance(Server s) {
-    server = s;
-  }
-  public Instance(Server s, Client c) {
-    client = c;
-    server = s;
-  }
-  public boolean isClient() {
-    return client != null;
-  }
-  public boolean isServer() {
-    return server != null;
-  }
-  public void handleConnect(Client session) {
-    // only one session allowed per ip
-    if (STRICT)
-      for (User u: users) {
-        if (session.ip().equals(u.getHostname()))
-          server.disconnect(session);
+  Display inputDisp;
+  Display messageDisp;
+  Display channelDisp;
+  Display userDisp;
+  ArrayList<Command> commands = new ArrayList<Command>(2);
+  private User SYSUSER = new User("***SYSTEM***", null);
+
+  public Instance() {
+    commands.add(new Quit());
+    commands.add(new Help());
+
+    screens.add(channelDisp = new Display(0, 0, 20, 60));
+    screens.add(messageDisp = new Display(0, 0, 80, 58));
+    screens.add(inputDisp = new Display(0, 0, 80, 1));
+    inputDisp.addLine(input);
+    screens.add(userDisp = new Display(0, 0, 30, 60));
+
+    float[] buf = null;
+    for (Display display: screens) {
+      if (buf != null) { //<>//
+        if (display == inputDisp) {
+          display.reposition(messageDisp.getX(), (int)buf[1]);
+        }
+        else {
+          display.reposition((int)buf[0], 0);
+        }
       }
-  }
-
-  public void sendMessage(Message m) {
-    HashMap<String, String> message = new HashMap<String, String>();
-    String uuid = "" + Math.random();
-    message.put("Command", "SEND");
-    message.put("User", m.getAuthor().getUsername());
-    message.put("Host", m.getAuthor().getHostname());
-    message.put("Content", m.getContent());
-    message.put("UUID", uuid);
-    client.write(encodePacket(message));
-    sent.add(uuid); //<>//
-    instance.screens.get(1).addLine(m);
-    screens.get(1).display();
-    println("hrm rhm");
-  }
-  public void handleServerPacket(byte[] packet) {
-    HashMap<String, String> parsed = parsePacket(packet);
-
-    // skip packets we sent
-    String uuid = parsed.getOrDefault("UUID", "");
-    for (int i = 0; i < sent.size(); i++) {
-      if (sent.get(i).equals(uuid)) {
-        sent.remove(i);
-        println("short circuitng");
-        return;
-      }
-    }
-
-    String command = parsed.getOrDefault("Command", "");
-    if (command.equals("SEND")) {
-      // Channel channel = channels.get(getChannel(parsed.get("Channel")));
-      Message message = new Message(new User(parsed.get("User"), parsed.get("Host")), parsed.get("Content"));
-      instance.screens.get(1).addLine(message);
-      instance.screens.get(1).display();
-      println("hrmm?? " + parsed.get("Content"));
+      buf = display.display();
     }
   }
-  public void handleClientPacket(Client session, byte[] packet) {
-    // as of right now, all packets are passed right back to clients with minimal validation (this is a bad idea)
-    HashMap<String, String> parsed = parsePacket(packet);
-    // parsed.put("Host", session.ip());
-    server.write(encodePacket(parsed));
-    println("DEBUG: " + encodePacket(parsed));
-  }
+ //<>//
   /*
    * Packet structure:
    * Command\037SEND\036Data\037Name2\036..
@@ -187,5 +169,58 @@ public class Instance {
       return true;
     }
     return false;
+  }
+  public String getInput() {
+    return input.content;
+  }
+  public void setInput(String newInput) {
+    input.content = newInput;
+    inputDisp.markRerender();
+  }
+  public boolean executeCallback() {
+    if (input.content.startsWith("/")) {
+      String[] args = input.content.substring(1).split(" ");
+      if (args.length == 0) return false;
+      for (Command c: commands) {
+        if (args[0].equals(c.getName())) {
+          c.execute(args);
+          break;
+        }
+      }
+      setInput("");
+      return true;
+    }
+    return false;
+  }
+  public void sysPrint(String line) {
+    messageDisp.addLine(new Message(SYSUSER, line));
+    messageDisp.markRerender();
+  }
+
+  public class Quit implements Command {
+    public String getName() {
+      return "quit";
+    }
+    public String getHelp() {
+      return "Quits the program";
+    }
+    public void execute(String[] args) {
+      exit();
+    }
+  }
+
+  public class Help implements Command {
+    public String getName() {
+      return "help";
+    }
+    public String getHelp() {
+      return "Shows this help text";
+    }
+    public void execute(String[] args) {
+      sysPrint("Processing Relay Chat");
+      sysPrint("Usage: /<command>");
+      for (Command c: commands)
+        sysPrint("/" + c.getName() + ": " + c.getHelp());
+    }
   }
 }
