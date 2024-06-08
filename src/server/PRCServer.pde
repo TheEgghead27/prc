@@ -26,6 +26,8 @@ public class PRCServer extends Instance {
 
 
     String command = parsed.getOrDefault("Command", "UNDEF");
+        sysPrint("GOT PACKET: " + command);
+
     if (command.equals("SEND"))
       server.write(super.encodePacket(parsed));
 
@@ -57,28 +59,14 @@ public class PRCServer extends Instance {
     }
 
     else if (command.equals("JOIN")) {
-      for (String reqHeader: new String[]{"User", "Channel"}) {
-        if (parsed.get(reqHeader) == null || parsed.get(reqHeader).length() == 0) {
-          session.write(error(reqHeader + " header not specified."));
-          return;
-        }
-      }
-
-      User u = new User(parsed.get("User"), session.ip());
-      int index = -1;
-      for (int i = 0; i < users.size(); i++) {
-        if (users.get(i).equals(u)) {
-          index = i;
-          break;
-        }
-      }
-      if (index == -1) {
-         session.write(error("Invalid user."));
-         return;
+      if (parsed.get("Channel") == null || parsed.get("Channel").length() == 0) {
+        session.write(error("Channel header not specified."));
+        return;
       }
       String cName = constrainString(parsed.get("Channel"), 10);
       if (cName.indexOf("#") != -1) {
         session.write(error("Channel names cannot have `#` in them.")); 
+        return;
       }
 
       if (getChannel(cName) == -1) {
@@ -88,6 +76,7 @@ public class PRCServer extends Instance {
       }
 
       sendChannels();
+      print("channels??");
     }
 
     else if (command.equals("CHAN"))
@@ -109,6 +98,7 @@ public class PRCServer extends Instance {
     String c = "";
     for (Channel chan: channels) {
       c += chan;
+      sysPrint("Publishing " + chan);
     }
     packet.put("Channels", c);
     server.write(encodePacket(packet));

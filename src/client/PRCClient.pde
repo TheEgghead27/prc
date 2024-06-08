@@ -7,6 +7,8 @@ public class PRCClient extends Instance {  // "PRC Client"
     super();
     super.addCommand(new Nick());
     super.addCommand(new ClientQuit());
+    Join j = new Join();
+    super.addCommand(j);
     netClient = c;
     registerUser();
   }
@@ -50,11 +52,11 @@ public class PRCClient extends Instance {  // "PRC Client"
     }
 
     String command = parsed.getOrDefault("Command", "");
+    sysPrint("GOT PACKET: " + command);
     if (command.equals("SEND")) {
       // Channel channel = channels.get(getChannel(parsed.get("Channel")));
       Message message = new Message(new User(parsed.get("User"), parsed.get("Host")), parsed.get("Content"));
-      instance.screens.get(1).addLine(message);
-      instance.screens.get(1).display();
+      messageDisp.addLine(message);
       println("hrmm?? " + parsed.get("Content"));
     }
 
@@ -62,6 +64,18 @@ public class PRCClient extends Instance {  // "PRC Client"
       if (parsed.get("Ours") != null) {
         session = new User(parsed.getOrDefault("User", "404"), parsed.getOrDefault("Host", "0"));
         ready = true;
+      }
+    }
+    else if (command.equals("CHAN")) {
+      while (channels.size() > 0) {
+        channelDisp.removeLine(channels.remove(0));
+      }
+      String[] channelNames = parsed.get("Channels").split("#");
+      for (String c: channelNames) {
+        if (c.length() < 1) continue;
+        Channel newChan = new Channel(c);
+        channels.add(newChan);
+        channelDisp.addLine(newChan);
       }
     }
     else if (command.equals("ERROR")) {
@@ -115,10 +129,12 @@ public class PRCClient extends Instance {  // "PRC Client"
       }
       HashMap<String, String> packet = new HashMap<String, String>();
       packet.put("Command", "JOIN");
-      packet.put("User", session.getUsername());
-      packet.put("Channel", constrainString(args[1], 10));
+      
+      String c = (args[1].startsWith("#")) ? args[1].substring(1) : args[1];
+      packet.put("Channel", constrainString(c, 10));
       appendUUID(packet);
       netClient.write(encodePacket(packet));
+      sysPrint("SENT JOIN #" + c);
     }
   }
 }
