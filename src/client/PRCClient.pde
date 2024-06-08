@@ -8,6 +8,7 @@ public class PRCClient extends Instance {  // "PRC Client"
   Client netClient;
   User session;
   String curChannel;
+  HashMap<String, ArrayList<Message>> messages = new HashMap<String, ArrayList<Message>>();
 
   private boolean ready = false;
   ArrayList<String> sent = new ArrayList<String>();
@@ -17,6 +18,7 @@ public class PRCClient extends Instance {  // "PRC Client"
     super.addCommand(new ClientQuit());
     Join j = new Join();
     super.addCommand(j);
+    super.addCommand(new Switch());
     netClient = c;
     registerUser();
     j.execute(new String[]{"", "general"});
@@ -63,9 +65,16 @@ public class PRCClient extends Instance {  // "PRC Client"
     String command = parsed.getOrDefault("Command", "");
     sysPrint("GOT PACKET: " + command);
     if (command.equals("SEND")) {
-      // Channel channel = channels.get(getChannel(parsed.get("Channel")));
+      Channel channel = channels.get(getChannel(parsed.get("Channel")));
       Message message = new Message(new User(parsed.get("User"), parsed.get("Host")), parsed.get("Content"));
-      messageDisp.addLine(message);
+      ArrayList<Message> m = messages.get(channel.getName());
+      if (m == null) {
+        m = new ArrayList<Message>();
+        messages.put(channel.getName(), m);
+      }
+      m.add(message);
+      if (curChannel.equals(channel.getName()))
+        messageDisp.addLine(message);
     }
 
     else if (command.equals("NAME")) {
@@ -141,10 +150,22 @@ public class PRCClient extends Instance {  // "PRC Client"
       packet.put("Channel", constrainString(c, 10));
       appendUUID(packet);
       netClient.write(encodePacket(packet));
-      sysPrint("SENT JOIN #" + c);
       curChannel = c;
       channelLabel.clear();
       channelLabel.addLine(new Channel(curChannel));
+
+      messageDisp.clear();
+      if (messages.get(curChannel) != null)
+        for (Message m: messages.get(curChannel))
+          messageDisp.addLine(m);
+    }
+  }
+  public class Switch extends Join {
+    public String getName() {
+      return "switch";
+    }
+    public String getHelp() {
+      return "Switches to the specified channel. Alias of `/join`.";
     }
   }
 }
