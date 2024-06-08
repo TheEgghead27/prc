@@ -29,13 +29,22 @@ public class PRCServer extends Instance {
       session.write(super.encodePacket(parsed));
       println("registered user " + users.get(users.size() - 1));
     }
+    else {
+      sysPrint("Unknown command " + command);
+    }
     // println("DEBUG: " + super.encodePacket(parsed));
   }
   public boolean executeCallback() {
     if (super.executeCallback()) return true;
-    messageDisp.addLine(new Message(super.SYSUSER, "Unrecognized command `" + getInput() + "`."));
-    messageDisp.addLine(new Message(super.SYSUSER, "Type `/help` for information."));
+    sysPrint("Unrecognized command `" + getInput() + "`.");
+    sysPrint("Type `/help` for information.");
     setInput("");
     return true;
+  }
+  public void draw() {
+    super.draw();
+    Client client;
+    if ((client = instance.server.available()) != null)
+      instance.handleClientPacket(client, client.readBytes());
   }
 }

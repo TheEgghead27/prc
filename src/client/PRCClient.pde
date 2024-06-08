@@ -1,6 +1,7 @@
 public class PRCClient extends Instance {  // "PRC Client"
   Client netClient;
   User session;
+  private boolean ready = false;
   ArrayList<String> sent = new ArrayList<String>();
   public PRCClient(Client c) {
     super();
@@ -53,12 +54,15 @@ public class PRCClient extends Instance {  // "PRC Client"
     }
     else if (command.equals("NAME")) {
       session = new User(parsed.getOrDefault("User", "404"), parsed.getOrDefault("Host", "0"));
-      println("registered username" + session);
+      ready = true;
     }
   }
   public boolean executeCallback() {
     if (super.executeCallback()) return true;  // early exit if command was sent
-    if (session == null) sysPrint("Please register a username!");
+    if (!ready) {
+      sysPrint("No username registration detected; are we connected to the server?");
+      return false;
+    }
     println(session);
     Message m = new Message(session, getInput());
     sendMessage(m);

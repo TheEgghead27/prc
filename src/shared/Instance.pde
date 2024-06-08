@@ -4,9 +4,7 @@ import processing.net.Server;
 final boolean STRICT = false;
 
 void draw() {
-  for (Display screen: instance.screens) {
-    screen.display();
-  }
+  instance.draw();
 }
 
 public void initScreen() {
@@ -195,6 +193,10 @@ public class Instance {
   public void sysPrint(String line) {
     messageDisp.addLine(new Message(SYSUSER, line));
     messageDisp.markRerender();
+  }
+  public void draw() {
+    for (Display screen: screens)
+      screen.display();
   }
 
   public class Quit implements Command {
