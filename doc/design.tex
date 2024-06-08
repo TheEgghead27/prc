@@ -23,25 +23,22 @@
 
 \section{Description}
 Processing Relay Chat (PRC) encompasses a client program, server program, and protocol for instant messaging over the network. To accomplish this in Processing PRC the \href{https://processing.org/reference/libraries/net/index.html}{Network} library.\\
-PRC will include the following minimum features:
+PRC will include the following features:
 \begin{itemize}
-    \item Ephemeral plaintext (printable ASCII)\footnote{Due to font limitations, Unicode glyphs for other languages/emojis may not be fully supported.} messaging
-    \item IRC-like channels with descriptions
+    \item Ephemeral plaintext (printable ASCII)\footnote{Due to font limitations, Unicode glyphs for other languages/emojis cannot be fully supported.} messaging
     \item Usernames with deterministic colors
-    \item Message timestamps
-    \item Light and Dark modes for interface display
-\end{itemize}
-
-Optionally, PRC extensions may include (to be implemented after core functionality is complete):
-\begin{itemize}
     \item A slash command framework for advanced user interaction
     \item Image embedding, including animated GIFs
-    \item Clickable links
-    \item File sharing functionality
     \item Chat log export
-    \item Simple games embedded in the chat window (Tic-Tac-Toe, Checkers, etc.)
-    \item Additional themes for the interface (\href{https://draculatheme.com/}{Dracula}, \href{https://catppuccin.com/}{Catppuccin}, \href{https://www.nordtheme.com/}{Nord}, etc.)
-    \item IRC bridging/client-mode compatibility (highly ambitious)
+\end{itemize}
+
+\subsection{Protocol}
+PRC uses a JSON-like TCP packet schema, in which ASCII separator characters are used, simplifying the burden of packet parsing. Commands include:
+\begin{itemize}
+   \item SEND packets to send user messages
+   \item NAME packets to set user nickname
+   \item JOIN packets to create/join channels
+   \item CHAN packets listing the available channels
 \end{itemize}
 
 %\begin{landscape}
