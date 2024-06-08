@@ -1,14 +1,10 @@
-void serverEvent(Server server, Client client) {
-  instance.handleClientPacket(client, client.readBytes());
-}
-
-
 public class PRCServer extends Instance {
   Server server;
   ArrayList<User> users = new ArrayList<User>();
 
   public PRCServer(Server s) {
     server = s;
+    super.addCommand(new ServerQuit());
   }
 
   public void handleConnect(Client session) {
@@ -56,14 +52,6 @@ public class PRCServer extends Instance {
       session.write(super.encodePacket(parsed));
       println("registered user " + users.get(users.size() - 1));
     }
-    else if (command.equals("QUIT")) {
-      for (int i = 0; i < users.size(); i++) {
-        if (users.get(i).getHostname().equals(session.ip())) {
-          userDisp.removeLine(users.remove(i));
-          break;
-        }
-      }
-    }
     else {
       sysPrint("Unknown command " + command);
     }
@@ -71,9 +59,7 @@ public class PRCServer extends Instance {
   }
   public boolean executeCallback() {
     if (super.executeCallback()) return true;
-    sysPrint("Unrecognized command `" + getInput() + "`.");
-    sysPrint("Type `/help` for information.");
-    setInput("");
+    printUnknown();
     return true;
   }
   public void draw() {
@@ -81,5 +67,11 @@ public class PRCServer extends Instance {
     Client client;
     if ((client = instance.server.available()) != null)
       instance.handleClientPacket(client, client.readBytes());
+  }
+  public class ServerQuit extends Quit {
+    void execute(String[] args) {
+      server.stop();  // boy do I wish this were in an interface
+      exit();
+    }
   }
 }

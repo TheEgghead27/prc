@@ -6,6 +6,7 @@ public class PRCClient extends Instance {  // "PRC Client"
   public PRCClient(Client c) {
     super();
     super.addCommand(new Nick());
+    super.addCommand(new ClientQuit());
     netClient = c;
     registerUser();
   }
@@ -89,6 +90,12 @@ public class PRCClient extends Instance {  // "PRC Client"
       }
       String username = (args[1].length() > 10 ? args[1].substring(0,10) : args[1]);
       registerUser(username);
+    }
+  }
+  public class ClientQuit extends Quit {
+    void execute(String[] args) {
+      netClient.stop();  // boy do I wish this were in an interface
+      exit();
     }
   }
 }

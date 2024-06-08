@@ -52,7 +52,6 @@ public class Instance {
   private User SYSUSER = new User("***SYSTEM***", null);
 
   public Instance() {
-    commands.add(new Quit());
     commands.add(new Help());
 
     screens.add(channelDisp = new Display(0, 0, 20, 60));
@@ -63,7 +62,7 @@ public class Instance {
 
     float[] buf = null;
     for (Display display: screens) {
-      if (buf != null) { //<>// //<>//
+      if (buf != null) { //<>// //<>// //<>//
         if (display == inputDisp) {
           display.reposition(messageDisp.getX(), (int)buf[1]);
         }
@@ -74,7 +73,7 @@ public class Instance {
       buf = display.display();
     }
   }
- //<>// //<>//
+ //<>// //<>// //<>//
   /*
    * Packet structure:
    * Command\037SEND\036Data\037Name2\036..
@@ -179,16 +178,26 @@ public class Instance {
     if (input.content.startsWith("/")) {
       String[] args = input.content.substring(1).split(" ");
       if (args.length == 0) return false;
+      boolean executed = false;
       for (Command c: commands) {
         if (args[0].equals(c.getName())) {
           c.execute(args);
+          executed = true;
           break;
         }
+      }
+      if (!executed) {
+        printUnknown();
       }
       setInput("");
       return true;
     }
     return false;
+  }
+  public void printUnknown() {
+    sysPrint("Unrecognized command `" + getInput() + "`.");
+    sysPrint("Type `/help` for information.");
+    setInput("");
   }
   public void sysPrint(String line) {
     messageDisp.addLine(new Message(SYSUSER, line));
@@ -202,16 +211,14 @@ public class Instance {
     commands.add(c);
   }
 
-  public class Quit implements Command {
+  public abstract class Quit implements Command {
     public String getName() {
       return "quit";
     }
     public String getHelp() {
       return "Quits the program";
     }
-    public void execute(String[] args) {
-      exit();
-    }
+    public abstract void execute(String[] args);
   }
 
   public class Help implements Command {
@@ -224,8 +231,9 @@ public class Instance {
     public void execute(String[] args) {
       sysPrint("Processing Relay Chat");
       sysPrint("Usage: /<command>");
-      for (Command c: commands)
-        sysPrint("/" + c.getName() + ": " + c.getHelp());
+      for (int i = commands.size() - 1; i >= 0; i--) {
+        sysPrint("/" + commands.get(i).getName() + ": " + commands.get(i).getHelp());
+      }
     }
   }
 }
