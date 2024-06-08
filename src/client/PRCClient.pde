@@ -1,3 +1,9 @@
+void clientEvent(Client client) {
+  ArrayList<byte[]> packets = getPackets(client.readBytes());
+  for (byte[] packet: packets)
+    instance.handleServerPacket(packet);
+}
+
 public class PRCClient extends Instance {  // "PRC Client"
   Client netClient;
   User session;
@@ -11,6 +17,7 @@ public class PRCClient extends Instance {  // "PRC Client"
     super.addCommand(j);
     netClient = c;
     registerUser();
+    j.execute(new String[]{"", "general"});
   }
   private void registerUser() {
     registerUser("Guest");

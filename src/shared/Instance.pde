@@ -1,5 +1,6 @@
 import processing.net.Client;
 import processing.net.Server;
+import java.util.Arrays;
 
 final boolean STRICT = false;
 
@@ -42,6 +43,17 @@ interface Command {
 
 public static String constrainString(String s, int l) {
   return (s.length() > l ? s.substring(0,l) : s);
+}
+
+public static ArrayList<byte[]> getPackets(byte[] queue){
+  ArrayList<byte[]> packets = new ArrayList<byte[]>(1);
+  int prev = 0;
+  for (int i = 0; i < queue.length; i++) {
+    if (queue[i] == '\003') {
+      packets.add(Arrays.copyOfRange(queue, prev, prev = ++i));
+    }
+  }
+  return packets;
 }
 
 public class Instance {

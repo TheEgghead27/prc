@@ -111,8 +111,11 @@ public class PRCServer extends Instance {
   public void draw() {
     super.draw();
     Client client;
-    if ((client = instance.server.available()) != null)
-      instance.handleClientPacket(client, client.readBytes());
+    if ((client = instance.server.available()) != null) {
+      ArrayList<byte[]> packets = getPackets(client.readBytes());
+      for (byte[] packet: packets)
+        instance.handleClientPacket(client, packet);
+    }
   }
   public class ServerQuit extends Quit {
     void execute(String[] args) {

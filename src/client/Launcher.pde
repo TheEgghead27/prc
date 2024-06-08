@@ -27,7 +27,3 @@ void setup() {
   };
   instance = new PRCClient(new Client(this, "127.0.0.1", 2510));
 }
-
-void clientEvent(Client client) {
-  instance.handleServerPacket(client.readBytes());
-}
