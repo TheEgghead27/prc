@@ -1,6 +1,5 @@
 public class PRCServer extends Instance {
   Server server;
-  ArrayList<User> users = new ArrayList<User>();
 
   public PRCServer(Server s) {
     server = s;
@@ -25,9 +24,9 @@ public class PRCServer extends Instance {
        parsed.put("Command", "QUIT");
     }
 
-
     String command = parsed.getOrDefault("Command", "UNDEF");
-        sysPrint("GOT PACKET: " + command);
+    if (DEBUG)
+      sysPrint("GOT PACKET: " + command);
 
     parsed.put("Host", session.ip());
     if (command.equals("SEND")) {
@@ -37,7 +36,7 @@ public class PRCServer extends Instance {
           return;
         }
       }
-      server.write(super.encodePacket(parsed));
+      broadcast(parsed);
     }
 
     else if (command.equals("NAME")) {
@@ -56,7 +55,7 @@ public class PRCServer extends Instance {
       }
       users.add(u);
       userDisp.addLine(u);
-      session.write(super.encodePacket(parsed));
+      session.write(encodePacket(parsed));
     }
 
     else if (command.equals("JOIN")) {
@@ -82,6 +81,19 @@ public class PRCServer extends Instance {
     else if (command.equals("CHAN"))
       sendChannels();
 
+    else if (command.equals("QUIT")) {
+      if (parsed.get("User") != null) {
+        User u = new User(parsed.get("User"), session.ip());
+        sysPrint("DEBUG: " + u);
+        int i;
+        if ((i = userDisp.removeLine(u)) != -1) {
+          users.remove(i);
+        }
+        sysPrint("DEBUG: " + i);
+      }
+      session.write(encodePacket(parsed));
+    }
+
     else {
       sysPrint("Unknown command " + command);
     }
@@ -90,7 +102,7 @@ public class PRCServer extends Instance {
     HashMap<String, String> packet = new HashMap<String, String>();
     packet.put("Command", "ERROR");
     packet.put("Error", e);
-    return super.encodePacket(packet);
+    return encodePacket(packet);
   }
   private void sendChannels() {
     HashMap<String, String> packet = new HashMap<String, String>();
@@ -101,6 +113,9 @@ public class PRCServer extends Instance {
       sysPrint("Publishing " + chan);
     }
     packet.put("Channels", c);
+    broadcast(packet);
+  }
+  private void broadcast(HashMap<String, String> packet) {
     server.write(encodePacket(packet));
   }
   public boolean executeCallback() {
@@ -119,6 +134,9 @@ public class PRCServer extends Instance {
   }
   public class ServerQuit extends Quit {
     void execute(String[] args) {
+      HashMap<String, String> packet = new HashMap<String, String>();
+      packet.put("Command", "QUIT");
+      broadcast(packet);
       server.stop();  // boy do I wish this were in an interface
       exit();
     }

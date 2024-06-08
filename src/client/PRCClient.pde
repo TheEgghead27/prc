@@ -35,13 +35,14 @@ public class PRCClient extends Instance {  // "PRC Client"
       netClient.write(super.encodePacket(packet));
   }
   public void sendMessage(Message m) {
+    if (m.getContent().length() < 1) return;
     HashMap<String, String> message = new HashMap<String, String>();
     message.put("Command", "SEND");
     message.put("User", m.getAuthor().getUsername());
     message.put("Host", m.getAuthor().getHostname());
     message.put("Content", m.getContent());
     message.put("Channel", curChannel);
-    netClient.write(super.encodePacket(message));
+    send(message);
   }
   private void appendUUID(HashMap<String, String> packet) {
     String uuid = "" + Math.random();
@@ -63,7 +64,8 @@ public class PRCClient extends Instance {  // "PRC Client"
     }
 
     String command = parsed.getOrDefault("Command", "");
-    sysPrint("GOT PACKET: " + command);
+    if (DEBUG)
+      sysPrint("GOT PACKET: " + command);
     if (command.equals("SEND")) {
       Channel channel = channels.get(getChannel(parsed.get("Channel")));
       Message message = new Message(new User(parsed.get("User"), parsed.get("Host")), parsed.get("Content"));
@@ -95,6 +97,10 @@ public class PRCClient extends Instance {  // "PRC Client"
         channelDisp.addLine(newChan);
       }
     }
+    else if (command.equals("QUIT")) {
+      netClient.stop();
+      exit();
+    }
     else if (command.equals("ERROR")) {
       sysPrint("ERROR: " + parsed.get("Error"));
     }
@@ -109,6 +115,9 @@ public class PRCClient extends Instance {  // "PRC Client"
     sendMessage(m);
     setInput("");
     return true;
+  }
+  public void send(HashMap<String, String> packet) {
+    netClient.write(encodePacket(packet));
   }
   public class Nick implements Command {
     public String getName() {
@@ -127,8 +136,10 @@ public class PRCClient extends Instance {  // "PRC Client"
   }
   public class ClientQuit extends Quit {
     void execute(String[] args) {
-      netClient.stop();  // boy do I wish this were in an interface
-      exit();
+      HashMap<String, String> packet = new HashMap<String, String>();
+      packet.put("Command", "QUIT");
+      packet.put("User", session.getUsername());
+      send(packet);
     }
   }
   public class Join implements Command {
@@ -149,7 +160,7 @@ public class PRCClient extends Instance {  // "PRC Client"
       String c = (args[1].startsWith("#")) ? args[1].substring(1) : args[1];
       packet.put("Channel", constrainString(c, 10));
       appendUUID(packet);
-      netClient.write(encodePacket(packet));
+      send(packet);
       curChannel = c;
       channelLabel.clear();
       channelLabel.addLine(new Channel(curChannel));

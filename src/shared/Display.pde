@@ -23,14 +23,15 @@ class Display {
       lines.remove(0);
     markRerender();
   }
-  public boolean removeLine(Text line) {
+  public int removeLine(Text line) {
     for (int i = 0; i < lines.size(); i++) {
       if (lines.get(i).equals(line)) {
         lines.remove(i);
-        return true;
+        markRerender();
+        return i;
       }
     }
-    return false;
+    return -1;
   }
 
   public void reposition(int x, int y) {

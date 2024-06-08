@@ -3,6 +3,7 @@ import processing.net.Server;
 import java.util.Arrays;
 
 final boolean STRICT = false;
+final boolean DEBUG = true;
 
 void draw() {
   instance.draw();
@@ -64,6 +65,8 @@ public class Instance {
   Display channelDisp;
   Display channelLabel;
   Display userDisp;
+
+  ArrayList<User> users = new ArrayList<User>();
   ArrayList<Channel> channels = new ArrayList<Channel>();
   ArrayList<Command> commands = new ArrayList<Command>(2);
   private User SYSUSER = new User("***SYSTEM***", null);
@@ -78,7 +81,7 @@ public class Instance {
     inputDisp.addLine(input);
     screens.add(userDisp = new Display(0, 0, 30, 60));
 
-    float[] buf = null; //<>//
+    float[] buf = null;
     for (Display display: screens) {
       if (buf != null) {
         if (display == messageDisp || display == inputDisp) {
@@ -89,9 +92,8 @@ public class Instance {
         }
       }
       buf = display.display();
-    } //<>//
+    }
   }
- //<>//
   /*
    * Packet structure:
    * Command\037SEND\036Data\037Name2\036..
