@@ -23,11 +23,12 @@ public class PRCServer extends Instance {
        parsed = new HashMap<String, String>();
        parsed.put("Command", "QUIT");
     }
-    println("packet" + parsed.get("Command"));
-    
+
+
     String command = parsed.getOrDefault("Command", "UNDEF");
     if (command.equals("SEND"))
       server.write(super.encodePacket(parsed));
+
     else if (command.equals("NAME")) {
       if (parsed.get("User") == null)
         parsed.put("User", "Guest" + users.size());
@@ -54,10 +55,63 @@ public class PRCServer extends Instance {
       session.write(super.encodePacket(parsed));
       println("registered user " + users.get(users.size() - 1));
     }
+
+    else if (command.equals("JOIN")) {
+      for (String reqHeader: new String[]{"User", "Channel"}) {
+        if (parsed.get(reqHeader) == null || parsed.get(reqHeader).length() == 0) {
+          session.write(error(reqHeader + " header not specified."));
+          return;
+        }
+      }
+
+      User u = new User(parsed.get("User"), session.ip());
+      int index = -1;
+      for (int i = 0; i < users.size(); i++) {
+        if (users.get(i).equals(u)) {
+          index = i;
+          break;
+        }
+      }
+      if (index == -1) {
+         session.write(error("Invalid user."));
+         return;
+      }
+      String cName = constrainString(parsed.get("Channel"), 10);
+      if (cName.indexOf("#") != -1) {
+        session.write(error("Channel names cannot have `#` in them.")); 
+      }
+
+      if (getChannel(cName) == -1) {
+        Channel chan = new Channel(cName);
+        channels.add(chan);
+        channelDisp.addLine(chan);
+      }
+
+      sendChannels();
+    }
+
+    else if (command.equals("CHAN"))
+      sendChannels();
+
     else {
       sysPrint("Unknown command " + command);
     }
-    // println("DEBUG: " + super.encodePacket(parsed));
+  }
+  private String error(String e) {
+    HashMap<String, String> packet = new HashMap<String, String>();
+    packet.put("Command", "ERROR");
+    packet.put("Error", e);
+    return super.encodePacket(packet);
+  }
+  private void sendChannels() {
+    HashMap<String, String> packet = new HashMap<String, String>();
+    packet.put("Command", "CHAN");
+    String c = "";
+    for (Channel chan: channels) {
+      c += chan;
+    }
+    packet.put("Channels", c);
+    server.write(encodePacket(packet));
   }
   public boolean executeCallback() {
     if (super.executeCallback()) return true;

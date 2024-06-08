@@ -57,11 +57,15 @@ public class PRCClient extends Instance {  // "PRC Client"
       instance.screens.get(1).display();
       println("hrmm?? " + parsed.get("Content"));
     }
+
     else if (command.equals("NAME")) {
       if (parsed.get("Ours") != null) {
         session = new User(parsed.getOrDefault("User", "404"), parsed.getOrDefault("Host", "0"));
         ready = true;
       }
+    }
+    else if (command.equals("ERROR")) {
+      sysPrint("ERROR: " + parsed.get("Error"));
     }
   }
   public boolean executeCallback() {

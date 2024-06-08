@@ -47,11 +47,11 @@ public static String constrainString(String s, int l) {
 public class Instance {
   private Input input = new Input();
   ArrayList<Display> screens = new ArrayList<Display>();
-  ArrayList<Channel> channels = new ArrayList<Channel>();
   Display inputDisp;
   Display messageDisp;
   Display channelDisp;
   Display userDisp;
+  ArrayList<Channel> channels = new ArrayList<Channel>();
   ArrayList<Command> commands = new ArrayList<Command>(2);
   private User SYSUSER = new User("***SYSTEM***", null);
 
@@ -66,7 +66,7 @@ public class Instance {
 
     float[] buf = null;
     for (Display display: screens) {
-      if (buf != null) { //<>// //<>// //<>//
+      if (buf != null) { //<>//
         if (display == inputDisp) {
           display.reposition(messageDisp.getX(), (int)buf[1]);
         }
@@ -77,7 +77,7 @@ public class Instance {
       buf = display.display();
     }
   }
- //<>// //<>// //<>//
+ //<>//
   /*
    * Packet structure:
    * Command\037SEND\036Data\037Name2\036..
@@ -153,10 +153,7 @@ public class Instance {
   public void addScreen(Display screen) {
     screens.add(screen);
   }
-  public void addChannel(Channel channel) {
-    channels.add(channel);
-  }
-  private int getChannel(String channelName) {
+  public int getChannel(String channelName) {
     for (int i = 0; i < channels.size(); i++) {
       if (channels.get(i).getName().equals(channelName))
         return i;
