@@ -28,7 +28,8 @@ abstract class Text extends TextConstants {
 
     for (int i = 0; i < s.length(); i += w) {
       String line = s.substring(i, Math.min(i+w, s.length()));
-      text(line, x1, y1 + rows * fontSize, x2 - x1, y2 - y1);
+      text(line, x1, y1, x2 - x1, y2 - y1);
+      y1 += fontSize;
       rows++;
       remain = line.length();
     }
@@ -109,10 +110,10 @@ class Message extends Text {
     String disp = content;
     int[] ret, tmp;
     ret = author.display(x1, y1, x2, y2, w);
-    y += ret[0] * fontSize;
+    y1 += ret[0] * fontSize;
     if (ret[1] > 1) {  // username (+ 1 space) did not take up full row
       // move back a row
-      y -= fontSize;
+      y1 -= fontSize;
       ret[0]--;
 
       disp = new String(new char[ret[1] + 1]).replace('\0', ' ') + disp; // skip the chars in the last row + 1 space

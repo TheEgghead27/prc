@@ -57,12 +57,13 @@ class Display {
     needsRerender++;
     fill(0);
     stroke(255);
-    int finalWidth = dispWidth * Text.fontWidth + 2 * MARGIN;
-    rect(x, y, , dispHeight * Text.fontSize + 2 * MARGIN);
+    int finalWidth = (int)(dispWidth * Text.fontWidth + 2 * MARGIN);
+    int finalHeight = (int)(dispHeight * Text.fontSize + 2 * MARGIN);
+    rect(x, y, finalWidth, finalHeight);
     int pX = x + MARGIN;
     int pY = y + MARGIN;
     for (Text line: lines) {
-      pY += ((line.display(pX, pY, , dispWidth))[0] + Text.lineSpace) * Text.fontSize;
+      pY += ((line.display(pX, pY, x + finalWidth, y + finalHeight, dispWidth))[0] + Text.lineSpace) * Text.fontSize;
     }
     return new float[]{
       x + dispWidth * Text.fontWidth + 2 * MARGIN,
