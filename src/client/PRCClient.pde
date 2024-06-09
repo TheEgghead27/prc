@@ -116,8 +116,18 @@ public class PRCClient extends Instance {  // "PRC Client"
   }
   public boolean executeCallback() {
     if (netClient == null || !netClient.active()) {
-      sysPrint("Connecting...");
-      netClient = new Client(handle, getInput(), 2510);
+      String[] serverInfo = getInput().split(":");
+      int port = 2510;
+      if (serverInfo.length > 1) {
+        try {
+          port = Integer.valueOf(serverInfo[1]);
+        }
+        catch (NumberFormatException e) {
+          sysPrint("Failed to parse port \"" + serverInfo[1] + "\", defaulting to 2510"); 
+        }
+      }
+      sysPrint("Connecting to " + serverInfo[0] + " on port " + port + "...");
+      netClient = new Client(handle, serverInfo[0], port);
       if (netClient.active()) {
         setInput("");
         sysPrint("Successfully connected.");
@@ -130,11 +140,11 @@ public class PRCClient extends Instance {  // "PRC Client"
       }
       return true;
     }
-    if (super.executeCallback()) return true;  // early exit if command was sent
     if (!ready) {
       sysPrint("No username registration detected; are we connected to the server?");
       return false;
     }
+    if (super.executeCallback()) return true;  // early exit if command was sent
     Message m = new Message(session, getInput());
     sendMessage(m);
     setInput("");
@@ -162,7 +172,8 @@ public class PRCClient extends Instance {  // "PRC Client"
     void execute(String[] args) {
       HashMap<String, String> packet = new HashMap<String, String>();
       packet.put("Command", "QUIT");
-      packet.put("User", session.getUsername());
+      if (session != null)
+        packet.put("User", session.getUsername());
       send(packet);
     }
   }
