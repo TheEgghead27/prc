@@ -2,8 +2,9 @@ static final int MARGIN = 6;
 class Display {
   private int x = 0, y = 0;
   private int dispWidth = 80, dispHeight = 24;  // width and height in characters, disp prefix to avoid namespace collisions with global variables
+  private int offset = 0;
   private ArrayList<Text> lines = new ArrayList<Text>();
-  private static final int FRAMES = 10;
+  private static final int FRAMES = 5;
   int needsRerender = FRAMES - 1;
 
   public Display() {}
@@ -42,6 +43,12 @@ class Display {
       dispWidth = w;
       dispHeight = h;
   }
+  public void addOffset(int o) {
+    offset += o;
+    if (offset < 0) offset = 0;
+    else if (offset >= lines.size()) offset = lines.size() - 1;
+    markRerender();
+  }
   public int getX() {
     return x;
   }
@@ -62,8 +69,8 @@ class Display {
     rect(x, y, finalWidth, finalHeight);
     int pX = x + MARGIN;
     int pY = y + MARGIN;
-    for (Text line: lines) {
-      pY += ((line.display(pX, pY, x + finalWidth, y + finalHeight, dispWidth))[0] + Text.lineSpace) * Text.fontSize;
+    for (int i = offset; i < lines.size(); i++) {
+      pY += ((lines.get(i).display(pX, pY, x + finalWidth, y + finalHeight, dispWidth))[0] + Text.lineSpace) * Text.fontSize;
     }
     return new float[]{
       x + dispWidth * Text.fontWidth + 2 * MARGIN,

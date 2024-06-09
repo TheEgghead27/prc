@@ -22,11 +22,13 @@ abstract class Text extends TextConstants {
     fill(c);
     return display(x1, y1, x2, y2, w, s);
   }
+  // (x1, y1) are the top corner of the bounding box, (x2, y2) for the second
   int[] display(int x1, int y1, int x2, int y2, int w, String s) {
     int rows = 0;  // number of character rows
     int remain = 0;  // number of characters printed in last row
 
     for (int i = 0; i < s.length(); i += w) {
+      if (y2 < y1) break;
       String line = s.substring(i, Math.min(i+w, s.length()));
       text(line, x1, y1, x2 - x1, y2 - y1);
       y1 += fontSize;

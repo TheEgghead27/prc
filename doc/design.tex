@@ -67,10 +67,12 @@ PRC uses a JSON-like TCP packet schema, in which ASCII separator characters are 
     \begin{class}[text width = 4cm]{Display}{12,-7}
         \attribute{-width: int}
         \attribute{-height: int}
+        \attribute{-offset: int}
         \operation{+reposition(int x, int y): void}
         \operation{+resize(int w, int h): void}
         \operation{+display(): float[2]}
         \operation{+addLine(Text t): void}
+        \operation{+addOffset(int o): void}
         \operation{+clear(): void}
         \operation{+removeLine(Text t): boolean}
         \operation{+getX(): int}

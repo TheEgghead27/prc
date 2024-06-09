@@ -11,6 +11,7 @@ void draw() {
 
 public void initScreen() {
   background(0);
+  fill(0);
 
   // initialize Text fonts and rendering settings
   Text.lineSpace = .5;
@@ -25,15 +26,19 @@ public void initScreen() {
 }
 
 void keyPressed() {
-  if (keyCode == '\177' || keyCode == '\b')
+  if (keyCode == 38 || keyCode == 40) {
+    // up and down are 38 and 40 respectively
+    instance.messageDisp.addOffset(keyCode - 39);
+  }
+  else if (keyCode == '\177' || keyCode == '\b')
     instance.setInput(instance.getInput().substring(0, Math.max(instance.getInput().length() - 1, 0)));
-  if (keyCode == '\n' || keyCode == '\r') {
+  else if (keyCode == '\n' || keyCode == '\r') {
     instance.executeCallback();
   }
-  instance.screens.get(3).markRerender();
-  if (key < ' ' || key >= '\177')  // non-printable ASCII
+  else if (key < ' ' || key >= '\177')  // non-printable ASCII
     return;
-  instance.setInput(instance.getInput() + key);
+  else
+    instance.setInput(instance.getInput() + key);
 }
 
 interface Command {
@@ -205,6 +210,9 @@ public class Instance {
       }
       if (!executed) {
         printUnknown();
+      }
+      else {
+        sysPrint("apparently ok");
       }
       setInput("");
       return true;
