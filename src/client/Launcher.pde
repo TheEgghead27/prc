@@ -1,7 +1,7 @@
 PRCClient instance;
 
 void setup() {
-  size(1200,800);
+  size(1600,900);
   initScreen();
 
   instance = new PRCClient(this);

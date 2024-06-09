@@ -62,8 +62,8 @@ class Display {
   public float[] display() {
     if (needsRerender >= FRAMES) return new float[]{0,0};
     needsRerender++;
-    fill(0);
-    stroke(255);
+    fill(Text.bgColor);
+    stroke(Text.textColor);
     int finalWidth = (int)(dispWidth * Text.fontWidth + 2 * MARGIN);
     int finalHeight = (int)(dispHeight * Text.fontSize + 2 * MARGIN);
     rect(x, y, finalWidth, finalHeight);

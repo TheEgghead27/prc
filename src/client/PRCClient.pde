@@ -165,7 +165,7 @@ public class PRCClient extends Instance {  // "PRC Client"
         sysPrint("`/nick`: Please provide a nickname (up to 10 characters long).");
         return;
       }
-      registerUser(constrainString(args[1], 10));
+      registerUser(args[1]);
     }
   }
   public class ClientQuit extends Quit {
@@ -192,11 +192,10 @@ public class PRCClient extends Instance {  // "PRC Client"
       HashMap<String, String> packet = new HashMap<String, String>();
       packet.put("Command", "JOIN");
       
-      String c = (args[1].startsWith("#")) ? args[1].substring(1) : args[1];
-      packet.put("Channel", constrainString(c, 10));
+      curChannel = constrainString((args[1].startsWith("#")) ? args[1].substring(1) : args[1], CHAN_LIMIT);
+      packet.put("Channel", curChannel);
       appendUUID(packet);
       send(packet);
-      curChannel = c;
       channelLabel.clear();
       channelLabel.addLine(new Channel(curChannel));
 

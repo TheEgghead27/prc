@@ -4,7 +4,7 @@ public class PRCServer extends Instance {
   public PRCServer(Server s) {
     server = s;
     super.addCommand(new ServerQuit());
-    channelLabel.addLine(new Channel("## SERVER MODE ###"));
+    channelLabel.addLine(new Channel("############################################ SERVER MODE ############################################"));
   }
 
   public void handleConnect(Client session) {
@@ -47,7 +47,7 @@ public class PRCServer extends Instance {
         session.write(error("Usernames cannot have `#` in them."));
         return;
       }
-      User u = new User(constrainString(parsed.get("User"), 10), parsed.get("Host"));
+      User u = new User(constrainString(parsed.get("User"), USR_LIMIT), parsed.get("Host"));
       for (int i = 0; i < users.size(); i++) {
         if (users.get(i).equals(u)) {
           userDisp.removeLine(users.remove(i));
@@ -68,7 +68,7 @@ public class PRCServer extends Instance {
         session.write(error("Channel header not specified."));
         return;
       }
-      String cName = constrainString(parsed.get("Channel"), 10);
+      String cName = constrainString(parsed.get("Channel"), CHAN_LIMIT);
       if (cName.indexOf("#") != -1) {
         session.write(error("Channel names cannot have `#` in them.")); 
         return;

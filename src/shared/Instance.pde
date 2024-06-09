@@ -9,22 +9,6 @@ void draw() {
   instance.draw();
 }
 
-public void initScreen() {
-  background(0);
-  fill(0);
-
-  // initialize Text fonts and rendering settings
-  Text.lineSpace = .5;
-  Text.fontSize = 12;
-  Text.regular = createFont("Liberation Mono", Text.fontSize);
-  Text.bold = createFont("Liberation Mono Bold", Text.fontSize);
-  Text.italic = createFont("Liberation Mono Italic", Text.fontSize);
-  textAlign(LEFT, TOP);
-  Text.textColor = #ffffff;
-  textFont(Text.regular);
-  Text.fontWidth = textWidth(" ");  // monospace font means we can assume this is uniform
-}
-
 void keyPressed() {
   if (keyCode == 38 || keyCode == 40) {
     // up and down are 38 and 40 respectively
@@ -75,14 +59,17 @@ public class Instance {
   ArrayList<Channel> channels = new ArrayList<Channel>();
   ArrayList<Command> commands = new ArrayList<Command>(2);
   private User SYSUSER = new User("***SYSTEM***", null);
+  private static final int WINDOW_PADDING = 50;
+  static final int CHAN_LIMIT = 18;
+  static final int USR_LIMIT = 16;
 
   public Instance() {
     commands.add(new Help());
 
-    screens.add(channelDisp = new Display(0, 0, 20, 60));
-    screens.add(channelLabel = new Display(0, 0, 80, 1));
-    screens.add(messageDisp = new Display(0, 0, 80, 56));
-    screens.add(inputDisp = new Display(0, 0, 80, 1));
+    screens.add(channelDisp = new Display(WINDOW_PADDING, WINDOW_PADDING, 20, 60));
+    screens.add(channelLabel = new Display(0, 0, 100, 1));
+    screens.add(messageDisp = new Display(0, 0, 100, 56));
+    screens.add(inputDisp = new Display(0, 0, 100, 1));
     inputDisp.addLine(input);
     screens.add(userDisp = new Display(0, 0, 30, 60));
 
@@ -93,11 +80,12 @@ public class Instance {
           display.reposition(channelLabel.getX(), (int)buf[1]);
         }
         else {
-          display.reposition((int)buf[0], 0);
+          display.reposition((int)buf[0], WINDOW_PADDING);
         }
       }
       buf = display.display();
     }
+    windowResize((int) buf[0] + WINDOW_PADDING, (int) buf[1] + WINDOW_PADDING);
   }
   /*
    * Packet structure:
@@ -173,6 +161,10 @@ public class Instance {
   }
   public void addScreen(Display screen) {
     screens.add(screen);
+  }
+  public void refresh() {
+    for (Display s: screens)
+      s.markRerender();
   }
   public int getChannel(String channelName) {
     for (int i = 0; i < channels.size(); i++) {

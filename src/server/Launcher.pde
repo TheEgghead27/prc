@@ -18,4 +18,5 @@ void setup() {
   if (server == null) exit();
   instance = new PRCServer(server);
   instance.sysPrint("PRC Server running on port " + port);
+  instance.refresh();
 }

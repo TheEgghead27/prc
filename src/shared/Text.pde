@@ -1,7 +1,24 @@
+public void initScreen() {
+  background(30, 30, 46);
+  fill(30, 30, 46);
+
+  // initialize Text fonts and rendering settings
+  Text.lineSpace = .5;
+  Text.fontSize = 12;
+  Text.regular = createFont("Liberation Mono", Text.fontSize);
+  Text.bold = createFont("Liberation Mono Bold", Text.fontSize);
+  Text.italic = createFont("Liberation Mono Italic", Text.fontSize);
+  textAlign(LEFT, TOP);
+  Text.textColor = #ffffff;
+  textFont(Text.regular);
+  Text.fontWidth = textWidth(" ");  // monospace font means we can assume this is uniform
+}
+
 static abstract class TextConstants {
   // PRECONDITION: All PFonts are initialized externally in setup()
   static PFont regular, bold, italic;
-  static color textColor;
+  static color textColor = #cdd6f4;
+  static color bgColor = #1e1e2e;
   static int fontSize;
   static float fontWidth;
   static float lineSpace;
@@ -44,12 +61,20 @@ abstract class Text extends TextConstants {
 }
 
 color colors[] = new color[]{
-  #FF8800,
-  #FF2222,
-  #00FF00,
-  #00FF88,
-  #0088FF,
-  #FF00FF
+  #f5e0dc,
+  #f2cdcd,
+  #f5c2e7,
+  #cba6f7,
+  #f38ba8,
+  #eba0ac,
+  #fab387,
+  #f9e2af,
+  #a6e3a1,
+  #94e2d5,
+  #89dceb,
+  #74c7ec,
+  #89b4fa,
+  #b4befe
 };
 
 class User extends Text {
