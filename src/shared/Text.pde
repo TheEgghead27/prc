@@ -159,8 +159,16 @@ class Channel extends Text {
 
 class Input extends Text {
   String content = "";
+  int inputWidth = 40;
+  public Input() {}
+  public Input(int w) {
+    inputWidth = w;
+  }
   int[] display(int x1, int y1, int x2, int y2, int w) {
-    return display(x1, y1, x2, y2, w, content + '_', textColor, regular);
+    String buf = content + '_';
+    if (buf.length() > w)
+      buf = buf.substring(buf.length() - w);
+    return display(x1, y1, x2, y2, w, buf, textColor, regular);
   }
   public String toString() {
     return content;

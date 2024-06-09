@@ -3,7 +3,7 @@ import processing.net.Server;
 import java.util.Arrays;
 
 final boolean STRICT = false;
-final boolean DEBUG = true;
+final boolean DEBUG = false;
 
 void draw() {
   instance.draw();
@@ -211,9 +211,6 @@ public class Instance {
       if (!executed) {
         printUnknown();
       }
-      else {
-        sysPrint("apparently ok");
-      }
       setInput("");
       return true;
     }
@@ -256,8 +253,8 @@ public class Instance {
     public void execute(String[] args) {
       sysPrint("Processing Relay Chat");
       sysPrint("Usage: /<command>");
-      for (int i = commands.size() - 1; i >= 0; i--) {
-        sysPrint("/" + commands.get(i).getName() + ": " + commands.get(i).getHelp());
+      for (Command c: commands) {
+        sysPrint("/" + c.getName() + ": " + c.getHelp());
       }
     }
   }
