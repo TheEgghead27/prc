@@ -8,27 +8,27 @@ static abstract class TextConstants {
 }
 abstract class Text extends TextConstants {
   // width in characters, assuming monospace font
-  abstract int[] display(int x, int y, int w);
-  abstract String toString();
-  
+  abstract int[] display(int x1, int y1, int x2, int y2, int w);
+
   boolean equals(Text other) {
     return this.toString().equals(other.toString());
   }
-  int[] display(int x, int y, int w, String s, color c, PFont font) {
+
+  int[] display(int x1, int y1, int x2, int y2, int w, String s, color c, PFont font) {
     textFont(font);
-    return display(x, y, w, s, c);
+    return display(x1, y1, x2, y2, w, s, c);
   }
-  int[] display(int x, int y, int w, String s, color c) {
+  int[] display(int x1, int y1, int x2, int y2, int w, String s, color c) {
     fill(c);
-    return display(x, y, w, s);
+    return display(x1, y1, x2, y2, w, s);
   }
-  int[] display(int x, int y, int w, String s) {
+  int[] display(int x1, int y1, int x2, int y2, int w, String s) {
     int rows = 0;  // number of character rows
     int remain = 0;  // number of characters printed in last row
 
     for (int i = 0; i < s.length(); i += w) {
       String line = s.substring(i, Math.min(i+w, s.length()));
-      text(line, x, y + rows * fontSize);
+      text(line, x1, y1 + rows * fontSize, x2 - x1, y2 - y1);
       rows++;
       remain = line.length();
     }
@@ -65,8 +65,8 @@ class User extends Text {
     regenerate();
   }
 
-  int[] display(int x, int y, int w) {
-    return display(x, y, w, fullname, userColor, bold);
+  int[] display(int x1, int y1, int x2, int y2, int w) {
+    return display(x1, y1, x2, y2, w, fullname, userColor, bold);
   }
   public String getUsername() {
     return username;
@@ -105,10 +105,10 @@ class Message extends Text {
     content = c;
   }
 
-  int[] display(int x, int y, int w) {
+  int[] display(int x1, int y1, int x2, int y2, int w) {
     String disp = content;
     int[] ret, tmp;
-    ret = author.display(x, y, w);
+    ret = author.display(x1, y1, x2, y2, w);
     y += ret[0] * fontSize;
     if (ret[1] > 1) {  // username (+ 1 space) did not take up full row
       // move back a row
@@ -118,7 +118,7 @@ class Message extends Text {
       disp = new String(new char[ret[1] + 1]).replace('\0', ' ') + disp; // skip the chars in the last row + 1 space
     }
 
-    tmp = display(x, y, w, disp, textColor, regular);
+    tmp = display(x1, y1, x2, y2, w, disp, textColor, regular);
     ret[0] += tmp[0];
     ret[1] = tmp[1];
     return ret;
@@ -144,21 +144,20 @@ class Channel extends Text {
     return name;
   }
 
-  int[] display(int x, int y, int w) {
-    String disp = toString();
-    return display(x, y, w, disp, textColor, bold);
-  }
-
   public String toString() {
     return "#" + name;
+  }
+
+  int[] display(int x1, int y1, int x2, int y2, int w) {
+    return display(x1, y1, x2, y2, w, toString(), textColor, bold);
   }
 }
 
 
 class Input extends Text {
   String content = "";
-  int[] display(int x, int y, int w) {
-    return display(x, y, w, content + '_', textColor, regular);
+  int[] display(int x1, int y1, int x2, int y2, int w) {
+    return display(x1, y1, x2, y2, w, content + '_', textColor, regular);
   }
   public String toString() {
     return content;

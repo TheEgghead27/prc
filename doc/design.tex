@@ -53,6 +53,10 @@ PRC uses a JSON-like TCP packet schema, in which ASCII separator characters are 
         \attribute{+fontWidth: float}
         \attribute{+lineSpace: float}
         \operation{+equals(Text other): boolean}
+        \operation{+display(int x1, int y1, int x2, int y2, int w): int[3]}
+        \operation{+display(int x1, int y1, int x2, int y2, int w, String s): int[3]}
+        \operation{+display(int x1, int y1, int x2, int y2, int w, String s, color c): int[3]}
+        \operation{+display(int x1, int y1, int x2, int y2, int w, String s, color c, PFont font): int[3]}
         \operation{+display(int x, int y, int w): int[3]}
         \operation{+display(int x, int y, int w, String s): int[3]}
         \operation{+display(int x, int y, int w, String s, color c): int[3]}
