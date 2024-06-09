@@ -1,5 +1,5 @@
 \documentclass{article}
-\usepackage[letterpaper, total={6.5in, 9in}]{geometry}
+\usepackage[letterpaper, total={7.5in, 10in}]{geometry}
 \usepackage{graphicx} % Required for inserting images
 \usepackage{hyperref}
 \usepackage[simplified]{pgf-umlcd}
@@ -41,11 +41,12 @@ PRC uses a JSON-like TCP packet schema, in which ASCII separator characters are 
    \item CHAN packets listing the available channels
 \end{itemize}
 
-%\begin{landscape}
+\begin{landscape}
 \section{UML Diagram}
+\begin{center}
 \begin{tikzpicture}
-\begin{scope}[scale=0.8, transform shape]
-    \begin{abstractclass}[text width = 4cm]{Text}{20,3}
+\begin{scope}[scale=0.75, transform shape]
+    \begin{abstractclass}[text width = 5cm]{Text}{20,2}
         \attribute{+regular: PFont}
         \attribute{+bold: PFont}
         \attribute{+italic: PFont}
@@ -62,9 +63,9 @@ PRC uses a JSON-like TCP packet schema, in which ASCII separator characters are 
         \operation{+display(int x, int y, int w, String s, color c): int[3]}
         \operation{+display(int x, int y, int w, String s, color c, PFont font): int[3]}
     \end{abstractclass}
-        \umlnote[draw] at (20, -10) (text) {Due to Processing limitations, instance variables (which are static, and initialized in \verb|setup()|) are in a static superclass \verb|TextConstants|.};
+        \umlnote[draw, text width = 8cm] at (12, -4) (text) {Due to Processing limitations, instance variables (which are static, and initialized in \verb|setup()|) are in a static superclass \verb|TextConstants|.};
 
-    \begin{class}[text width = 4cm]{Display}{12,-7}
+    \begin{class}[text width = 4cm]{Display}{12,-6}
         \attribute{-width: int}
         \attribute{-height: int}
         \attribute{-offset: int}
@@ -80,11 +81,11 @@ PRC uses a JSON-like TCP packet schema, in which ASCII separator characters are 
     \end{class}
     \unidirectionalAssociation{Display}{lines}{0..*}{Text}
 
-    \begin{class}[text width = 4cm]{Input}{20, -6}
+	\begin{class}[text width = 4cm]{Input}{12, -2}
         \inherit{Text}
         \attribute{+content: String}
     \end{class}
-    \umlnote[draw] at (20, -7.5) (input-note) {\verb|content| is public to allow for the key event handler to manipulate its content.};
+    \umlnote[draw] at (20, -10.5) (input-note) {\verb|content| is public to allow for the key event handler to manipulate its content.};
 
     \begin{class}[text width = 4cm]{User}{12, 8}
         \inherit{Text}
@@ -97,7 +98,7 @@ PRC uses a JSON-like TCP packet schema, in which ASCII separator characters are 
         \operation{-regenerate(): void}
     \end{class}
 
-    \begin{class}[text width = 4cm]{Channel}{12,2}
+    \begin{class}[text width = 3cm]{Channel}{12,2}
         \inherit{Text}
         \attribute{-name: String}
         \operation{+getName(): String}
@@ -113,13 +114,13 @@ PRC uses a JSON-like TCP packet schema, in which ASCII separator characters are 
     \association{Channel}{channel}{1}{Message}{0..*}{messages}
     \unidirectionalAssociation{Message}{author}{1}{User}
 
-    \begin{abstractclass}{Command}{3,-8}
+    \begin{interface}{Command}{-1,4}
         \operation{+getName(): String}
         \operation{+getHelp(): String}
         \operation{+execute(String[] args): void}
-    \end{abstractclass}
+    \end{interface}
 
-    \begin{class}[text width = 5cm]{Instance}{3,-2}
+    \begin{class}[text width = 6cm]{Instance}{3,-1}
         \attribute{+inputDisp: Display}
         \attribute{+messageDisp: Display}
         \attribute{+channelDisp: Display}
@@ -136,7 +137,7 @@ PRC uses a JSON-like TCP packet schema, in which ASCII separator characters are 
         \operation{+encodePacket(HashMap<String, String> src): String}
         \operation{-parsePacket(byte[] packet): HashMap<String, String>}
     \end{class}
-    \begin{class}{PRCServer}{6, 2}
+    \begin{class}{PRCServer}{6, 4}
         \inherit{Instance}
         \attribute{-server: Server}
         \operation{+handleConnect(Client session): void}  % serverEvent()
@@ -154,10 +155,11 @@ PRC uses a JSON-like TCP packet schema, in which ASCII separator characters are 
     \unidirectionalAssociation{PRCClient}{session}{0..1}{User}
     \unidirectionalAssociation{PRCServer}{sessions}{0..*}{User}
 
-    \umlnote[draw] at (3, -11) (commands-note) {Any instance will have have, at minimum, \verb|/help| and \verb|/quit|.};
+    \umlnote[draw] at (3, -10) (commands-note) {Any instance will have have, at minimum, \verb|/help| and \verb|/quit|.};
 \end{scope}
 \end{tikzpicture}
-%\end{landscape}
+\end{center}
+\end{landscape}
 \newpage
 
 \section{Manual}
@@ -169,7 +171,7 @@ The server will attempt to start a TCP server on port 2510. If this fails, it wi
 The program will then display an entry screen from which the administrator can use the \verb|/quit| command to disconnect all clients. It will also list the usernames given by user logins, along with the channels that have been created. If the DEBUG boolean is enabled, additional logs will be displayed on screen.
 
 \subsection{Client Mode}
-The user will then enter a server address/port to connect to, in the \verb|host:port| format. On successful connection, the user will be registered to a guest username, and join the \verb|#general| chat by default.
+The user will be prompted enter a server address/port to connect to, in the \verb|host:port| format. On successful connection, the user will be registered to a guest username, and join the \verb|#general| chat by default.
 
 Using the \verb|/nick| command, the user can register a username, and using the \verb|/join| command, they are able to change to a different channel, or create their own. Like the server, their screen will display a list of connected users and channels. They can use \verb|/quit| to gracefully exit from the program.
 
