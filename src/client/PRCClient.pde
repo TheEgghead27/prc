@@ -5,6 +5,7 @@ void clientEvent(Client client) {
 }
 
 public class PRCClient extends Instance {  // "PRC Client"
+  private PApplet handle;  // to be used in initializing Client()
   Client netClient;
   User session;
   String curChannel;
@@ -12,16 +13,15 @@ public class PRCClient extends Instance {  // "PRC Client"
 
   private boolean ready = false;
   ArrayList<String> sent = new ArrayList<String>();
-  public PRCClient(Client c) {
+  public PRCClient(PApplet handle) {
     super();
     super.addCommand(new Nick());
     super.addCommand(new ClientQuit());
-    Join j = new Join();
-    super.addCommand(j);
+    super.addCommand(new Join());
     super.addCommand(new Switch());
-    netClient = c;
-    registerUser();
-    j.execute(new String[]{"", "general"});
+    // netClient = c;
+    this.handle = handle;
+    sysPrint("Please enter the IP address of the PRC server you wish to connect to.");
   }
   private void registerUser() {
     registerUser("");
@@ -96,7 +96,6 @@ public class PRCClient extends Instance {  // "PRC Client"
       }
 
       String[] userNames = parsed.getOrDefault("Users", "").split("#");
-      sysPrint(parsed.getOrDefault("Users", ""));
       if (userNames.length < 1) return;
       userDisp.clear();
       for (String u: userNames) {
@@ -116,6 +115,21 @@ public class PRCClient extends Instance {  // "PRC Client"
     }
   }
   public boolean executeCallback() {
+    if (netClient == null || !netClient.active()) {
+      sysPrint("Connecting...");
+      netClient = new Client(handle, getInput(), 2510);
+      if (netClient.active()) {
+        setInput("");
+        sysPrint("Successfully connected.");
+        registerUser();
+        (new Join()).execute(new String[]{"", "general"});
+      }
+      else {
+        sysPrint("Connection failed. Please enter the server IP address again.");
+        netClient = null;
+      }
+      return true;
+    }
     if (super.executeCallback()) return true;  // early exit if command was sent
     if (!ready) {
       sysPrint("No username registration detected; are we connected to the server?");
