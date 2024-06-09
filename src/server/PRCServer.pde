@@ -37,11 +37,16 @@ public class PRCServer extends Instance {
         }
       }
       broadcast(parsed);
+      return;  // no need to sync()
     }
 
     else if (command.equals("NAME")) {
       if (parsed.getOrDefault("User", "").length() == 0)
         parsed.put("User", "Guest" + users.size());
+      if (parsed.get("User").indexOf("#") != -1) {
+        session.write(error("Usernames cannot have `#` in them."));
+        return;
+      }
       User u = new User(constrainString(parsed.get("User"), 10), parsed.get("Host"));
       for (int i = 0; i < users.size(); i++) {
         if (users.get(i).equals(u)) {
@@ -74,12 +79,9 @@ public class PRCServer extends Instance {
         channels.add(chan);
         channelDisp.addLine(chan);
       }
-
-      sendChannels();
     }
 
-    else if (command.equals("CHAN"))
-      sendChannels();
+    else if (command.equals("CHAN") || command.equals("SYNC"));  // no-op, these are just to sync()
 
     else if (command.equals("QUIT")) {
       if (parsed.get("User") != null) {
@@ -96,7 +98,9 @@ public class PRCServer extends Instance {
 
     else {
       sysPrint("Unknown command " + command);
+      return;
     }
+    sync();
   }
   private String error(String e) {
     HashMap<String, String> packet = new HashMap<String, String>();
@@ -104,15 +108,21 @@ public class PRCServer extends Instance {
     packet.put("Error", e);
     return encodePacket(packet);
   }
-  private void sendChannels() {
+  private void sync() {
     HashMap<String, String> packet = new HashMap<String, String>();
-    packet.put("Command", "CHAN");
+    packet.put("Command", "SYNC");
     String c = "";
     for (Channel chan: channels) {
       c += chan;
-      sysPrint("Publishing " + chan);
+      if (DEBUG)
+        sysPrint("Publishing " + chan);
     }
     packet.put("Channels", c);
+    String u = "";
+    for (User user: users) {
+      u += user.toString() + '#';
+    }
+    packet.put("Users", u);
     broadcast(packet);
   }
   private void broadcast(HashMap<String, String> packet) {

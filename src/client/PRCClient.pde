@@ -85,16 +85,26 @@ public class PRCClient extends Instance {  // "PRC Client"
         ready = true;
       }
     }
-    else if (command.equals("CHAN")) {
-      while (channels.size() > 0) {
-        channelDisp.removeLine(channels.remove(0));
-      }
-      String[] channelNames = parsed.get("Channels").split("#");
+    else if (command.equals("SYNC")) {
+      channelDisp.clear();
+      String[] channelNames = parsed.getOrDefault("Channels", "").split("#");
       for (String c: channelNames) {
         if (c.length() < 1) continue;
         Channel newChan = new Channel(c);
         channels.add(newChan);
         channelDisp.addLine(newChan);
+      }
+
+      String[] userNames = parsed.getOrDefault("Users", "").split("#");
+      sysPrint(parsed.getOrDefault("Users", ""));
+      if (userNames.length < 1) return;
+      userDisp.clear();
+      for (String u: userNames) {
+        if (u.length() < 3) continue;
+        String[] user = u.split("@");
+        User newUser = new User(user[0], user[1]);
+        users.add(newUser);
+        userDisp.addLine(newUser);
       }
     }
     else if (command.equals("QUIT")) {
