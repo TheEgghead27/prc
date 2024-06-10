@@ -5,7 +5,7 @@ class Display {
   private int offset = 0;  // offset from start N lines to allow for scrolling
   private ArrayList<Text> lines = new ArrayList<Text>();
   private static final int FRAMES = 5;  // re-render N times to account for Processing failing to draw correctly
-  int needsRerender = FRAMES - 1;
+  private int needsRerender = FRAMES - 1;
 
   public Display(int x, int y, int w, int h) {
     this.x = x;

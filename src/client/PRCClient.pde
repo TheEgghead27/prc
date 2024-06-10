@@ -8,14 +8,14 @@ void clientEvent(Client client) {
 
 public class PRCClient extends Instance {  // "PRC Client"
   private PApplet handle;  // to be used in initializing Client()
-  Client netClient;
+  private Client netClient;
 
-  User session;
-  ArrayList<String> sent = new ArrayList<String>();
+  private User session;
+  private ArrayList<String> sent = new ArrayList<String>();
   private boolean ready = false;
 
-  String curChannel;
-  HashMap<String, ArrayList<Message>> messages = new HashMap<String, ArrayList<Message>>();
+  private String curChannel;
+  private HashMap<String, ArrayList<Message>> messages = new HashMap<String, ArrayList<Message>>();
 
   public PRCClient(PApplet handle) {
     super();
@@ -169,7 +169,7 @@ public class PRCClient extends Instance {  // "PRC Client"
     return true;
   }
 
-  public void send(HashMap<String, String> packet) {
+  private void send(HashMap<String, String> packet) {
     netClient.write(encodePacket(packet));
   }
 
