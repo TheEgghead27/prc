@@ -33,13 +33,30 @@ PRC will include the following features:
 \end{itemize}
 
 \subsection{Protocol}
-PRC uses a JSON-like TCP packet schema, in which ASCII separator characters are used, simplifying the burden of packet parsing. Commands include:
-\begin{itemize}
-   \item SEND packets to send user messages
-   \item NAME packets to set user nickname
-   \item JOIN packets to create/join channels
-   \item CHAN packets listing the available channels
-\end{itemize}
+\subsubsection{Packet Format}
+PRC uses a JSON-inspired TCP packet schema, in which ASCII separator characters are used, simplifying the burden of packet parsing. Bytes are denoted here using 3-digit octal notation.
+
+Non-printable ASCII, save for the specified special characters, are not permitted in a PRC packet. Row names and data fields may include arbitrary printable ASCII strings (characters ranging from \verb|\040| SPACE to \verb|\176| \verb|~|).
+
+Each row takes the form of \verb|NAME\037DATA|, with \verb|\037| being the "unit separator" byte, analogous to \verb|:| in JSON.
+A row can be terminated with the "record separator" character \verb|\036|, analogous to \verb|,| in JSON, to indicate that there is another record to parse, or with \verb|\003|, the "end of text" byte, to terminate parsing. Each row should be processed by the program as a String to String hashmap, with the NAME being the key, and the DATA being the value.
+
+A packet will NOT be parsed until a terminating "end of text" byte is detected.
+
+\subsubsection{Commands}
+By convention, commands are represented with a four or five letter, capitalized short string, though arbitrary capitalization, spacing, or length is possible. The command is specified in a PRC packet row named \verb|Command|.
+
+\paragraph{NAME} is the username registration command. The client should provide a \verb|UUID| field, which will be echoed in the response packet, in order to discern whether it is recieving its own name. The client provides the field \verb|User| to describe the requested username, and \verb|Old User| if the client already had a registered username. The server will validate that the username does NOT include \verb|#|, and assign a username of \verb|GuestN|, with $N$ being the number of already registered users, if there is an invalid \verb|User| field. The server will then echo the packet, but with the final, published \verb|User| value.
+
+\paragraph{SEND} is the message send command. The fields \verb|User|, \verb|Content|, and \verb|Channel| are required from the user, and the server will specify \verb|HOST| based on the client's IP address.
+
+\paragraph{JOIN} is the channel join command. The \verb|Channel| field is required, and the server will validate that the channel name does NOT include \verb|#|, and is of appropriate length (18). If the channel has not been created yet, the server will add a new channel to its listing. The server will respond with a \verb|SYNC| packet.
+
+\paragraph{SYNC} is the state synchronization packet. This packet, when sent by the client (or, \verb|CHAN| for backwards compatibility), will request the server to broadcast a \verb|SYNC| packet. The packet contains two fields, \verb|Channels| and \verb|Users|, with \verb|#| to deliminate entries.
+
+\paragraph{QUIT} is the quit command. When a client sends this command to the server, it is requesting a graceful exit, which the server will perform, then send a terminating \verb|QUIT| packet. When a client receives this packet, it will gracefully exit. The server will also send this packet before a server shutdown.
+
+\paragraph{ERROR} is the error packet. The client should never send this packet. The server will send this packet to the client when the client has sent a complete packet containing user errors, and the client should display the packet's contents to the user.
 
 \begin{landscape}
 \section{UML Diagram}
@@ -224,7 +241,8 @@ As of right now, message sharing, user color generation, and slash commands are 
     \item 05/26 -- 05/28: Adjusted UML class designs to provide additional necessary functionality. Began working on network transmission of messages.
     \item 05/29 -- 06/02: Worked around rendering bug that prevented messages from instantly appearing on the screen. Began pondering design and protocol alterations for separate Client/Server classes, along with proper maintainance of message, channel, and user states.
     \item 06/03 -- 06/08: Implemented the network protocol and state-sharing functionality between Client and Server, fixing bugs and pitfalls along the way. Merged the \verb|overflow| branch (from the previously logged step) and implemented scroll buffer features to enable a cohesive user experience. Reassessed scope to fit time frame. Implemented Catpuccin colors anyways because they're neat :)
-    \item 06/09 -- 06/10 (planned): Code cleanup for improved organization and cohesion, updating of documentation, implementation of final features; script-writing for the demonstration, which I hope to integrate a skit into the demonstration portion, with a broad overview of the code structure, pitfalls along the way, and my personal favorite functions.
+    \item 06/09: Cleaned up code for improved organization and cohesion in design, updated and rearranged UML diagram from the umpteenth (and hopefully final) time to reflect current classes, documented protocol in detail, began writing plot for planned demonstration skit.
+    \item 06/10 (planned):  implementation of final features; script-writing for the demonstration, which I hope to integrate a skit into the demonstration portion, with a broad overview of the code structure, pitfalls along the way, and my personal favorite functions.
 \end{itemize}
 
 \end{document}
