@@ -7,28 +7,21 @@ public class PRCServer extends Instance {
     channelLabel.addLine(new Channel("############################################ SERVER MODE ############################################"));
   }
 
-  public void handleConnect(Client session) {
-    // only one session allowed per ip
-    if (STRICT)
-      for (User u: users) {
-        if (session.ip().equals(u.getHostname()))
-          server.disconnect(session);
-      }
-  }
-
   public void handleClientPacket(Client session, byte[] packet) {
     HashMap<String, String> parsed;
     if (packet != null) parsed = super.parsePacket(packet);
     else {
-       parsed = new HashMap<String, String>();
-       parsed.put("Command", "QUIT");
+      // default to QUIT packet
+      parsed = new HashMap<String, String>();
+      parsed.put("Command", "QUIT");
     }
+    parsed.put("Host", session.ip());
 
-    String command = parsed.getOrDefault("Command", "UNDEF");
+    String command = parsed.getOrDefault("Command", "NULL");
     if (DEBUG)
       sysPrint("GOT PACKET: " + command);
 
-    parsed.put("Host", session.ip());
+
     if (command.equals("SEND")) {
       for (String reqHeader: new String[]{"User", "Content", "Channel"}) {
         if (parsed.get(reqHeader) == null || parsed.get(reqHeader).length() == 0) {
@@ -86,28 +79,28 @@ public class PRCServer extends Instance {
     else if (command.equals("QUIT")) {
       if (parsed.get("User") != null) {
         User u = new User(parsed.get("User"), session.ip());
-        sysPrint("DEBUG: " + u);
         int i;
         if ((i = userDisp.removeLine(u)) != -1) {
           users.remove(i);
         }
-        sysPrint("DEBUG: " + i);
       }
       session.write(encodePacket(parsed));
     }
 
     else {
-      sysPrint("Unknown command " + command);
+      session.write(error("Unknown command " + command));
       return;
     }
     sync();
   }
+
   private String error(String e) {
     HashMap<String, String> packet = new HashMap<String, String>();
     packet.put("Command", "ERROR");
     packet.put("Error", e);
     return encodePacket(packet);
   }
+
   private void sync() {
     HashMap<String, String> packet = new HashMap<String, String>();
     packet.put("Command", "SYNC");
@@ -125,23 +118,29 @@ public class PRCServer extends Instance {
     packet.put("Users", u);
     broadcast(packet);
   }
+
   private void broadcast(HashMap<String, String> packet) {
     server.write(encodePacket(packet));
   }
+
   public boolean executeCallback() {
     if (super.executeCallback()) return true;
     printUnknown();
     return true;
   }
+
   public void draw() {
     super.draw();
     Client client;
     if ((client = instance.server.available()) != null) {
-      ArrayList<byte[]> packets = getPackets(client.readBytes());
-      for (byte[] packet: packets)
+      while (client.available() > 0) {
+        byte[] packet = client.readBytesUntil('\003');
+        if (packet == null) break;
         instance.handleClientPacket(client, packet);
+      }
     }
   }
+
   public class ServerQuit extends Quit {
     void execute(String[] args) {
       HashMap<String, String> packet = new HashMap<String, String>();

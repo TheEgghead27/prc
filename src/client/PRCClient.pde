@@ -1,28 +1,32 @@
 void clientEvent(Client client) {
-  ArrayList<byte[]> packets = getPackets(client.readBytes());
-  for (byte[] packet: packets)
+  while (client.available() > 0) {
+    byte[] packet = client.readBytesUntil('\003');
+    if (packet == null) break;
     instance.handleServerPacket(packet);
+  }
 }
 
 public class PRCClient extends Instance {  // "PRC Client"
   private PApplet handle;  // to be used in initializing Client()
   Client netClient;
+
   User session;
+  ArrayList<String> sent = new ArrayList<String>();
+  private boolean ready = false;
+
   String curChannel;
   HashMap<String, ArrayList<Message>> messages = new HashMap<String, ArrayList<Message>>();
 
-  private boolean ready = false;
-  ArrayList<String> sent = new ArrayList<String>();
   public PRCClient(PApplet handle) {
     super();
     super.addCommand(new Nick());
     super.addCommand(new ClientQuit());
     super.addCommand(new Join());
     super.addCommand(new Switch());
-    // netClient = c;
     this.handle = handle;
     sysPrint("Please enter the IP address of the PRC server you wish to connect to.");
   }
+
   private void registerUser() {
     registerUser("");
   }
@@ -34,6 +38,7 @@ public class PRCClient extends Instance {  // "PRC Client"
       appendUUID(packet);
       netClient.write(super.encodePacket(packet));
   }
+
   public void sendMessage(Message m) {
     if (m.getContent().length() < 1) return;
     HashMap<String, String> message = new HashMap<String, String>();
@@ -44,6 +49,7 @@ public class PRCClient extends Instance {  // "PRC Client"
     message.put("Channel", curChannel);
     send(message);
   }
+
   private void appendUUID(HashMap<String, String> packet) {
     String uuid = "" + Math.random();
     packet.put("UUID", uuid);
@@ -53,7 +59,7 @@ public class PRCClient extends Instance {  // "PRC Client"
   public void handleServerPacket(byte[] packet) {
     HashMap<String, String> parsed = super.parsePacket(packet);
 
-    // skip packets we sent
+    // mark packets that are responses to ones we sent
     String uuid = parsed.getOrDefault("UUID", "");
     for (int i = 0; i < sent.size(); i++) {
       if (sent.get(i).equals(uuid)) {
@@ -66,6 +72,8 @@ public class PRCClient extends Instance {  // "PRC Client"
     String command = parsed.getOrDefault("Command", "");
     if (DEBUG)
       sysPrint("GOT PACKET: " + command);
+
+
     if (command.equals("SEND")) {
       Channel channel = channels.get(getChannel(parsed.get("Channel")));
       Message message = new Message(new User(parsed.get("User"), parsed.get("Host")), parsed.get("Content"));
@@ -85,6 +93,7 @@ public class PRCClient extends Instance {  // "PRC Client"
         ready = true;
       }
     }
+
     else if (command.equals("SYNC")) {
       channelDisp.clear();
       String[] channelNames = parsed.getOrDefault("Channels", "").split("#");
@@ -106,15 +115,19 @@ public class PRCClient extends Instance {  // "PRC Client"
         userDisp.addLine(newUser);
       }
     }
+
     else if (command.equals("QUIT")) {
       netClient.stop();
       exit();
     }
+
     else if (command.equals("ERROR")) {
       sysPrint("ERROR: " + parsed.get("Error"));
     }
   }
+
   public boolean executeCallback() {
+    // initial state - trying to connect to given server IP
     if (netClient == null || !netClient.active()) {
       String[] serverInfo = getInput().split(":");
       int port = 2510;
@@ -140,19 +153,26 @@ public class PRCClient extends Instance {  // "PRC Client"
       }
       return true;
     }
+
+    // managed to connect to the server, but still may have session = null or other uninitialized states
     if (!ready) {
       sysPrint("No username registration detected; are we connected to the server?");
       return false;
     }
-    if (super.executeCallback()) return true;  // early exit if command was sent
+
+    if (super.executeCallback()) return true;  // early exit if a command was run
+
+    // read and send message
     Message m = new Message(session, getInput());
     sendMessage(m);
     setInput("");
     return true;
   }
+
   public void send(HashMap<String, String> packet) {
     netClient.write(encodePacket(packet));
   }
+
   public class Nick implements Command {
     public String getName() {
       return "nick";
@@ -168,6 +188,7 @@ public class PRCClient extends Instance {  // "PRC Client"
       registerUser(args[1]);
     }
   }
+
   public class ClientQuit extends Quit {
     void execute(String[] args) {
       HashMap<String, String> packet = new HashMap<String, String>();
@@ -177,6 +198,7 @@ public class PRCClient extends Instance {  // "PRC Client"
       send(packet);
     }
   }
+
   public class Join implements Command {
     public String getName() {
       return "join";
@@ -205,6 +227,7 @@ public class PRCClient extends Instance {  // "PRC Client"
           messageDisp.addLine(m);
     }
   }
+
   public class Switch extends Join {
     public String getName() {
       return "switch";

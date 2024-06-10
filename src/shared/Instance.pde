@@ -2,7 +2,6 @@ import processing.net.Client;
 import processing.net.Server;
 import java.util.Arrays;
 
-final boolean STRICT = false;
 final boolean DEBUG = false;
 
 void draw() {
@@ -35,17 +34,6 @@ public static String constrainString(String s, int l) {
   return (s.length() > l ? s.substring(0,l) : s);
 }
 
-public static ArrayList<byte[]> getPackets(byte[] queue){
-  ArrayList<byte[]> packets = new ArrayList<byte[]>(1);
-  int prev = 0;
-  for (int i = 0; i < queue.length; i++) {
-    if (queue[i] == '\003') {
-      packets.add(Arrays.copyOfRange(queue, prev, prev = ++i));
-    }
-  }
-  return packets;
-}
-
 public class Instance {
   private Input input = new Input();
   ArrayList<Display> screens = new ArrayList<Display>();
@@ -58,10 +46,12 @@ public class Instance {
   ArrayList<User> users = new ArrayList<User>();
   ArrayList<Channel> channels = new ArrayList<Channel>();
   ArrayList<Command> commands = new ArrayList<Command>(2);
-  private User SYSUSER = new User("***SYSTEM***", null);
+
   private static final int WINDOW_PADDING = 50;
   static final int CHAN_LIMIT = 18;
   static final int USR_LIMIT = 16;
+
+  private User SYSUSER = new User("***SYSTEM***", null);
 
   public Instance() {
     commands.add(new Help());
@@ -85,8 +75,12 @@ public class Instance {
       }
       buf = display.display();
     }
-    windowResize((int) buf[0] + WINDOW_PADDING, (int) buf[1] + WINDOW_PADDING);
+    if (buf != null)
+      windowResize((int) buf[0] + WINDOW_PADDING, (int) buf[1] + WINDOW_PADDING);
+    else
+      sysPrint("Failed to resize window, did a display break?");
   }
+
   /*
    * Packet structure:
    * Command\037SEND\036Data\037Name2\036..
@@ -147,6 +141,7 @@ public class Instance {
        sysPrint("Parse error: Packet not terminated correctly :(");
      return buf;
   }
+
   public String encodePacket(HashMap<String, String> src) {
     String buf = "";
     int row = 0;
@@ -159,13 +154,7 @@ public class Instance {
     }
     return buf;
   }
-  public void addScreen(Display screen) {
-    screens.add(screen);
-  }
-  public void refresh() {
-    for (Display s: screens)
-      s.markRerender();
-  }
+
   public int getChannel(String channelName) {
     for (int i = 0; i < channels.size(); i++) {
       if (channels.get(i).getName().equals(channelName))
@@ -173,21 +162,25 @@ public class Instance {
     }
     return -1;
   }
-  public boolean removeChannel(String channelName) {
-    int i;
-    if ((i = getChannel(channelName)) > -1) {
-      channels.remove(i);
-      return true;
-    }
-    return false;
+
+  public void addScreen(Display screen) {
+    screens.add(screen);
   }
+
+  public void refresh() {
+    for (Display s: screens)
+      s.markRerender();
+  }
+
   public String getInput() {
     return input.content;
   }
+
   public void setInput(String newInput) {
     input.content = newInput;
     inputDisp.markRerender();
   }
+
   public boolean executeCallback() {
     if (input.content.startsWith("/")) {
       String[] args = input.content.substring(1).split(" ");
@@ -208,19 +201,23 @@ public class Instance {
     }
     return false;
   }
+
   public void printUnknown() {
     sysPrint("Unrecognized command `" + getInput() + "`.");
     sysPrint("Type `/help` for information.");
     setInput("");
   }
+
   public void sysPrint(String line) {
     messageDisp.addLine(new Message(SYSUSER, line));
     messageDisp.markRerender();
   }
+
   public void draw() {
     for (Display screen: screens)
       screen.display();
   }
+
   public void addCommand(Command c) {
     commands.add(c);
   }

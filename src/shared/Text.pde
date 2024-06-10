@@ -1,6 +1,6 @@
 public void initScreen() {
-  background(30, 30, 46);
-  fill(30, 30, 46);
+  background(Text.bgColor);
+  fill(Text.bgColor);
 
   // initialize Text fonts and rendering settings
   Text.lineSpace = .5;
@@ -15,7 +15,7 @@ public void initScreen() {
 }
 
 static abstract class TextConstants {
-  // PRECONDITION: All PFonts are initialized externally in setup()
+  // PRECONDITION: All PFonts are initialized by initScreen()
   static PFont regular, bold, italic;
   static color textColor = #cdd6f4;
   static color bgColor = #1e1e2e;
@@ -23,6 +23,24 @@ static abstract class TextConstants {
   static float fontWidth;
   static float lineSpace;
 }
+
+color colors[] = new color[]{
+  #f5e0dc,
+  #f2cdcd,
+  #f5c2e7,
+  #cba6f7,
+  #f38ba8,
+  #eba0ac,
+  #fab387,
+  #f9e2af,
+  #a6e3a1,
+  #94e2d5,
+  #89dceb,
+  #74c7ec,
+  #89b4fa,
+  #b4befe
+};
+
 abstract class Text extends TextConstants {
   // width in characters, assuming monospace font
   abstract int[] display(int x1, int y1, int x2, int y2, int w);
@@ -39,7 +57,10 @@ abstract class Text extends TextConstants {
     fill(c);
     return display(x1, y1, x2, y2, w, s);
   }
+  // primary Text display method
   // (x1, y1) are the top corner of the bounding box, (x2, y2) for the second
+  // w is the character width of the screen we are printing on
+  // s is the string we are printing
   int[] display(int x1, int y1, int x2, int y2, int w, String s) {
     int rows = 0;  // number of character rows
     int remain = 0;  // number of characters printed in last row
@@ -59,23 +80,6 @@ abstract class Text extends TextConstants {
     };
   }
 }
-
-color colors[] = new color[]{
-  #f5e0dc,
-  #f2cdcd,
-  #f5c2e7,
-  #cba6f7,
-  #f38ba8,
-  #eba0ac,
-  #fab387,
-  #f9e2af,
-  #a6e3a1,
-  #94e2d5,
-  #89dceb,
-  #74c7ec,
-  #89b4fa,
-  #b4befe
-};
 
 class User extends Text {
   private String username;
