@@ -28,7 +28,6 @@ PRC will include the following features:
     \item Ephemeral plaintext (printable ASCII)\footnote{Due to font limitations, Unicode glyphs for other languages/emojis cannot be fully supported.} messaging
     \item Usernames with deterministic colors
     \item A slash command framework for advanced user interaction
-    \item File sharing
     \item Chat log export
 \end{itemize}
 
@@ -59,7 +58,7 @@ By convention, commands are represented with a four or five letter, capitalized 
 \paragraph{ERROR} is the error packet. The client should never send this packet. The server will send this packet to the client when the client has sent a complete packet containing user errors, and the client should display the packet's contents to the user.
 
 \section{Functionality}
-As of right now, message sharing, user color generation, and slash commands are complete. Chat log export and file sharing are to be completed.
+As of right now, message sharing, user color generation, and slash commands are complete. Chat log export is yet to be completed.
 
 \subsection{Issues}
 \begin{enumerate}
