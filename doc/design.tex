@@ -132,8 +132,8 @@ PRC uses a JSON-like TCP packet schema, in which ASCII separator characters are 
         \attribute{+channelDisp: Display}
         \attribute{+userDisp: Display}
 
-        \operation{-parsePacket(byte[] packet): HashMap<String, String>}
-        \operation{+encodePacket(HashMap<String, String> src): String}
+        \operation{-parsePacket(byte[] packet): HashMap$<$String, String$>$}
+        \operation{+encodePacket(HashMap$<$String, String$>$ src): String}
         \operation{+getChannel(String channelName): int)}
         \operation{+addScreen(Display screen): void}
         \operation{+refresh(): void}
@@ -159,21 +159,21 @@ PRC uses a JSON-like TCP packet schema, in which ASCII separator characters are 
         \operation{+handleClientPacket(Client session, byte[] packet): void}  % Server.available() - server receives packet
         \operation{-error(String e): String}
         \operation{-sync(): void}
-        \operation{-broadcast(HashMap<String, String>): void}
+        \operation{-broadcast(HashMap$<$String, String$>$): void}
     \end{class}
 
-    \begin{class}{PRCClient}{3, 8}
+    \begin{class}[text width = 6cm]{PRCClient}{3, 8}
         \inherit{Instance}
         \attribute{-handle: PApplet}
         \attribute{-client: Client}
-        \attribute{-sent: ArrayList<String>}
+        \attribute{-sent: ArrayList$<$String$>$}
         \attribute{-ready: boolean}
 
         \operation{-registerUser(): void}
         \operation{-registerUser(String username): void}
         \operation{-sendMessage(Message m): void}
-        \operation{-appendUUID(HashMap<String, String> packet): void}
-        \operation{-send(HashMap<String, String> packet): void}
+        \operation{-appendUUID(HashMap$<$String, String$>$ packet): void}
+        \operation{-send(HashMap$<$String, String$>$ packet): void}
         \operation{+handleServerPacket(byte[] packet): void}  % clientEvent() - client receives packet
     \end{class}
     \unidirectionalAssociation{PRCClient}{session}{0..1}{User}
