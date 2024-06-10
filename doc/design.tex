@@ -28,7 +28,8 @@ PRC will include the following features:
     \item Ephemeral plaintext (printable ASCII)\footnote{Due to font limitations, Unicode glyphs for other languages/emojis cannot be fully supported.} messaging
     \item Usernames with deterministic colors
     \item A slash command framework for advanced user interaction
-    \item Chat log export
+    \item Message scrollback buffers to enable traversal of message history
+    \item Chat log export for archival and analysis of messages
 \end{itemize}
 
 \subsection{Protocol}
@@ -63,8 +64,8 @@ All functionality has been completed.
 \subsection{Issues}
 \begin{enumerate}
     \item To share font data among \verb|Text| subclasses, it was appropriate to use \verb|static| variables, but there may be "non-\verb|static| inner type" issues when trying to declare \verb|static| variables in the \verb|Text| abstract class. To fix this, the abstract class itself must be declared \verb|static|. (\href{https://forum.processing.org/two/discussion/23623/when-creating-a-class-what-is-it-an-inner-class-of-declared-static-in-a-non-static-inner-type.html}{Source})
-    \item In testing, it appears that a Client and a Server running in the same PApplet may lead to unexpected behavior. Thus, it will be necessary to run the server separately from the client.
-    \item The Display class had a tendency for displayed lines to overflow the boundaries of the screen. The solution is to use the bounding box features in Processing's \verb|text()| function to cut off lines as needed, and additional logic to prevent attempted display of additional lines outside of the boundary. To avoid issues with losing message data, it will be possible for the message box to scroll.
+    \item In testing, it appears that a Client and a Server running in the same PApplet may lead to inbound packets being incorrectly received by the client instead of the server. Thus, it will be necessary to run the server separately from the client.
+    \item The Display class had a tendency to display lines past the boundaries of the screen. The solution is to use the bounding box features in Processing's \verb|text()| function to cut off lines as needed, and provide additional logic to prevent attempted display of additional lines outside of the boundary. To avoid losing messages past the boundary, it will be possible for the message box to scroll.
     \item The programs would behave erratically if there was a failure to connect to the server or bind to a valid port. To fix this, we can add additional error checks that will attempt to automatically resolve the issue, or prompt the user for corrections.
 \end{enumerate}
 
@@ -226,23 +227,23 @@ All functionality has been completed.
 \newpage
 
 \section{Manual}
-PRC encompasses two separate programs, a Server and Client program. In both programs, \verb|/help| will print out a description of available slash-commands when they are available.
+PRC encompasses two separate programs, a Server and Client program. In both programs, entering \verb|/help| will print out a list and brief description of available slash-commands.
 
 \subsection{Server Mode}
-The server will attempt to start a TCP server on port 2510. If this fails, it will increment upward until a working port is found. If the program fails to find a port, it will exit().
+The server will attempt to bind to TCP port 2510. The server will increment the port number upward until a working port is found. If the program fails to find a working port, it will \verb|exit()|.
 
-The program will then display an entry screen from which the administrator can use the \verb|/quit| command to disconnect all clients. It will also list the usernames given by user logins, along with the channels that have been created. If the DEBUG boolean is enabled, additional logs will be displayed on screen.
+The program will then display an entry screen from which the administrator can use the \verb|/quit| command to disconnect all clients. It will also list the logged in usernames, along with the channels that have been created. If the DEBUG boolean is enabled, additional event logs will be displayed on screen.
 
 \subsection{Client Mode}
-The user will be prompted enter a server address/port to connect to, in the \verb|host:port| format. On successful connection, the user will be registered to a guest username, and join the \verb|#general| chat by default.
+The user will be prompted to enter a server address/port to connect to, in the \verb|host:port| format. On successful connection, the user will be registered to a guest username, and join the \verb|#general| chat by default.
 
 Using the \verb|/nick| command, the user can register a username, and using the \verb|/join| command, they are able to change to a different channel, or create their own. Like the server, their screen will display a list of connected users and channels. They can use \verb|/quit| to gracefully exit from the program.
 
-User colors are generated from a palette using a deterministic algorithm that guarantees that the same user with the same nickname on the same host IP address will have the same color as displayed in chat.
+User colors are generated client-side from a palette using a deterministic algorithm that guarantees that the same user with the same nickname on the same host IP address will have the same color in chat regardless of chat channel, server, or time.
 
 Once logged into a channel, the user is allowed to enter their message into the bottom chatbox, and press enter to send it to the channel. This message will only appear when the user has \verb|/switch|ed to the correct channel. Messages in other channels are hidden until the user switches to them.
-Messages in the current channel can be saved with timestamp using the \verb|/export <FILENAME>| command, or its alias \verb|/save|.
+Messages in the current channel can be saved with the current timestamp using the \verb|/export <FILENAME>| command, or its alias \verb|/save|.
 
-Using the up and down arrow keys, the user may scroll through chat history, akin to pagers like the \verb|less| command in many Unix environments.
+Using the up and down arrow keys, the user may scroll through chat history, akin to pagers such as the \verb|less| command in many Unix environments.
 
 \end{document}
