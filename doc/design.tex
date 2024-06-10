@@ -58,7 +58,7 @@ By convention, commands are represented with a four or five letter, capitalized 
 \paragraph{ERROR} is the error packet. The client should never send this packet. The server will send this packet to the client when the client has sent a complete packet containing user errors, and the client should display the packet's contents to the user.
 
 \section{Functionality}
-As of right now, message sharing, user color generation, and slash commands are complete. Chat log export is yet to be completed.
+All functionality has been completed.
 
 \subsection{Issues}
 \begin{enumerate}
@@ -78,7 +78,7 @@ As of right now, message sharing, user color generation, and slash commands are 
     \item 05/29 -- 06/02: Worked around rendering bug that prevented messages from instantly appearing on the screen. Began pondering design and protocol alterations for separate Client/Server classes, along with proper maintainance of message, channel, and user states.
     \item 06/03 -- 06/08: Implemented the network protocol and state-sharing functionality between Client and Server, fixing bugs and pitfalls along the way. Merged the \verb|overflow| branch (from the previously logged step) and implemented scroll buffer features to enable a cohesive user experience. Reassessed scope to fit time frame. Implemented Catpuccin colors anyways because they're neat :)
     \item 06/09: Cleaned up code for improved organization and cohesion in design, updated and rearranged UML diagram from the umpteenth (and hopefully final) time to reflect current classes, documented protocol in detail, began writing plot for planned demonstration skit.
-    \item 06/10 (planned):  implementation of final features; script-writing for the demonstration, which I hope to integrate a skit into the demonstration portion, with a broad overview of the code structure, pitfalls along the way, and my personal favorite functions.
+    \item 06/10 -- 06/12: Implemented logging features. Finalized script-writing for the demonstration skit, recording, and editing for the demonstration video.
 \end{itemize}
 
 \begin{landscape}
@@ -241,6 +241,7 @@ Using the \verb|/nick| command, the user can register a username, and using the 
 User colors are generated from a palette using a deterministic algorithm that guarantees that the same user with the same nickname on the same host IP address will have the same color as displayed in chat.
 
 Once logged into a channel, the user is allowed to enter their message into the bottom chatbox, and press enter to send it to the channel. This message will only appear when the user has \verb|/switch|ed to the correct channel. Messages in other channels are hidden until the user switches to them.
+Messages in the current channel can be saved with timestamp using the \verb|/export <FILENAME>| command, or its alias \verb|/save|.
 
 Using the up and down arrow keys, the user may scroll through chat history, akin to pagers like the \verb|less| command in many Unix environments.
 
