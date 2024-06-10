@@ -162,7 +162,7 @@ class Message extends Text {
     return content;
   }
   public String toString() {
-    return content;
+    return author + " " + content;
   }
 }
 

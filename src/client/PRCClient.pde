@@ -1,3 +1,5 @@
+import java.util.Date;
+
 void clientEvent(Client client) {
   while (client.available() > 0) {
     byte[] packet = client.readBytesUntil('\003');
@@ -23,6 +25,8 @@ public class PRCClient extends Instance {  // "PRC Client"
     super.addCommand(new ClientQuit());
     super.addCommand(new Join());
     super.addCommand(new Switch());
+    super.addCommand(new Export());
+    super.addCommand(new Save());
     this.handle = handle;
     sysPrint("Please enter the IP address of the PRC server you wish to connect to.");
   }
@@ -234,6 +238,43 @@ public class PRCClient extends Instance {  // "PRC Client"
     }
     public String getHelp() {
       return "Switches to the specified channel. Alias of `/join`.";
+    }
+  }
+
+  public class Export implements Command {
+    public String getName() {
+      return "export";
+    }
+    public String getHelp() {
+      return "Exports the chat logs from the current channel to the specified filename (no spaces, default is <CHANNEL>.log).";
+    }
+    public void execute(String[] args) {
+      if (messages.get(curChannel) == null || messages.get(curChannel).size() == 0) {
+        sysPrint("Nothing to save.");
+        return;
+      }
+      String[] lines = new String[messages.get(curChannel).size() + 1];
+      lines[0] = "=== #" + curChannel + " (" + new Date() + ") ===";
+      for (int i = 0; i < messages.get(curChannel).size(); i++) {
+        lines[i+1] = messages.get(curChannel).get(i).toString();
+      }
+      String filename = (args.length > 1) ? args[1] : curChannel + ".log";
+      try {
+        saveStrings(filename, lines);
+        sysPrint("Saved #" + curChannel + " to " + filename + ".");
+      }
+      catch (Exception e) {
+        println(e);
+        sysPrint("Error saving file, are you are able write to " + filename + "?");
+      }
+    }
+  }
+  public class Save extends Export {
+    public String getName() {
+      return "save";
+    }
+    public String getHelp() {
+      return "Alias of /export.";
     }
   }
 }
