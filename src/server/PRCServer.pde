@@ -16,6 +16,7 @@ public class PRCServer extends Instance {
       parsed.put("Command", "QUIT");
     }
     parsed.put("Host", session.ip());
+    if (session.ip().equals("127.0.0.1")) parsed.put("Host", "stuy.edu");
 
     String command = parsed.getOrDefault("Command", "NULL");
     if (DEBUG)
@@ -78,7 +79,7 @@ public class PRCServer extends Instance {
 
     else if (command.equals("QUIT")) {
       if (parsed.get("User") != null) {
-        User u = new User(parsed.get("User"), session.ip());
+        User u = new User(parsed.get("User"), (session.ip().equals("127.0.0.1")) ? "stuy.edu" : session.ip());
         int i;
         if ((i = userDisp.removeLine(u)) != -1) {
           users.remove(i);

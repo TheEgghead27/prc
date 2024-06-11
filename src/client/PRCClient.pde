@@ -144,6 +144,7 @@ public class PRCClient extends Instance {  // "PRC Client"
         }
       }
       sysPrint("Connecting to " + serverInfo[0] + " on port " + port + "...");
+      if (serverInfo[0].equals("stuy.edu")) serverInfo[0] = "127.0.0.1";
       netClient = new Client(handle, serverInfo[0], port);
       if (netClient.active()) {
         setInput("");
